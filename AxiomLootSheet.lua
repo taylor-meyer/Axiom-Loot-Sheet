@@ -20,10 +20,12 @@ function CreateMainFrame(self)
 	if not Sheet then
 	
 	
+	
+		-----------------------------------------------------
 		-- main sheet
-		local f = CreateFrame("Frame", "Sheet", UIParent, "DialogBoxFrame")
+		local f = CreateFrame("Frame", "Sheet", UIParent)
 		f:SetPoint("CENTER")
-		f:SetSize(400, 1000)
+		f:SetSize(283, 1000)
 			
 		-- Texture
 		f:SetBackdrop({
@@ -43,10 +45,13 @@ function CreateMainFrame(self)
 			end
 		end)
 		f:SetScript("OnMouseUp", f.StopMovingOrSizing)
+		-----------------------------------------------------
 	
 	
 	
 	
+	
+		-----------------------------------------------------
 		-- boxes
 		CharacterBoxes = {}
 		CharacterBoxes[1] = CreateFrame("EditBox", nil, Sheet)
@@ -76,6 +81,138 @@ function CreateMainFrame(self)
 			})
 			CharacterBoxes[i]:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 		end
+		
+		-----------------------------------------------------
+		
+		
+		
+		
+		
+		
+		
+		
+		-----------------------------------------------------
+		MSBoxes = {}
+		for i=1, 20 do
+			MSBoxes[i] = CreateFrame("EditBox", nil, Sheet)
+			MSBoxes[i]:SetPoint("LEFT", CharacterBoxes[i], "RIGHT", 5, 0)
+			-- textures
+			MSBoxes[i]:SetSize(40, 40)
+			MSBoxes[i]:SetMultiLine(false)
+			MSBoxes[i]:SetAutoFocus(false) -- dont automatically focus
+			MSBoxes[i]:SetFontObject("ChatFontNormal")
+			MSBoxes[i]:SetMaxLetters(12)
+			MSBoxes[i]:SetText("MS")
+			MSBoxes[i]:SetTextInsets(8, 0, 0, 0)
+			-- Texture
+			MSBoxes[i]:SetBackdrop({
+				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+				edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+				edgeSize = 16,
+				insets = { left = 8, right = 6, top = 8, bottom = 8 },
+			})
+			MSBoxes[i]:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+		end
+		-----------------------------------------------------
+		
+		
+		
+		-----------------------------------------------------
+		OSBoxes = {}
+		for i=1, 20 do
+			OSBoxes[i] = CreateFrame("EditBox", nil, Sheet)
+			OSBoxes[i]:SetPoint("LEFT", MSBoxes[i], "RIGHT", 5, 0)
+			-- textures
+			OSBoxes[i]:SetSize(40, 40)
+			OSBoxes[i]:SetMultiLine(false)
+			OSBoxes[i]:SetAutoFocus(false) -- dont automatically focus
+			OSBoxes[i]:SetFontObject("ChatFontNormal")
+			OSBoxes[i]:SetMaxLetters(12)
+			OSBoxes[i]:SetText("OS")
+			OSBoxes[i]:SetTextInsets(8, 0, 0, 0)
+			-- Texture
+			OSBoxes[i]:SetBackdrop({
+				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+				edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+				edgeSize = 16,
+				insets = { left = 8, right = 6, top = 8, bottom = 8 },
+			})
+			OSBoxes[i]:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+		end
+		-----------------------------------------------------
+		
+		
+		
+		-----------------------------------------------------
+		TMOGBoxes = {}
+		for i=1, 20 do
+			TMOGBoxes[i] = CreateFrame("EditBox", nil, Sheet)
+			TMOGBoxes[i]:SetPoint("LEFT", OSBoxes[i], "RIGHT", 5, 0)
+			-- textures
+			TMOGBoxes[i]:SetSize(40, 40)
+			TMOGBoxes[i]:SetMultiLine(false)
+			TMOGBoxes[i]:SetAutoFocus(false) -- dont automatically focus
+			TMOGBoxes[i]:SetFontObject("ChatFontNormal")
+			TMOGBoxes[i]:SetMaxLetters(12)
+			TMOGBoxes[i]:SetText("TM")
+			TMOGBoxes[i]:SetTextInsets(8, 0, 0, 0)
+			-- Texture
+			TMOGBoxes[i]:SetBackdrop({
+				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+				edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+				edgeSize = 16,
+				insets = { left = 8, right = 6, top = 8, bottom = 8 },
+			})
+			TMOGBoxes[i]:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+		end
+		-----------------------------------------------------
+		
+		
+		
+		local CloseButton = CreateFrame('Button', nil, Sheet, "UIPanelButtonTemplate")
+		CloseButton:SetPoint('BOTTOM', Sheet, 'BOTTOM', -60, 20)
+		CloseButton:SetSize(75, 40)
+		-- Texture
+		CloseButton:SetText("Close")
+		CloseButton:SetBackdrop({
+			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+			edgeSize = 16,
+			insets = { left = 8, right = 6, top = 8, bottom = 8 },
+		})
+		CloseButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+		CloseButton:SetScript('OnClick', function()
+		   Sheet:Hide()
+		end)
+		
+		local ClearButton = CreateFrame('Button', nil, Sheet, "UIPanelButtonTemplate")
+		ClearButton:SetPoint('BOTTOM', Sheet, 'BOTTOM', 60, 20)
+		ClearButton:SetSize(75, 40)
+		-- Texture
+		ClearButton:SetText("Clear")
+		ClearButton:SetBackdrop({
+			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+			edgeSize = 16,
+			insets = { left = 8, right = 6, top = 8, bottom = 8 },
+		})
+		ClearButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+		ClearButton:SetScript('OnClick', function()
+		   Sheet:Hide()
+		end)
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 	end
 	Sheet:Show()
