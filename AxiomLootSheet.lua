@@ -17,6 +17,7 @@ SlashCmdList["AxiomLootSheet"] = LootSheet
 --end
 
 function CreateMainFrame(self)
+
 	if not Sheet then
 	
 	
@@ -101,7 +102,7 @@ function CreateMainFrame(self)
 			MSBoxes[i]:SetMultiLine(false)
 			MSBoxes[i]:SetAutoFocus(false) -- dont automatically focus
 			MSBoxes[i]:SetFontObject("ChatFontNormal")
-			MSBoxes[i]:SetMaxLetters(12)
+			MSBoxes[i]:SetMaxLetters(2)
 			MSBoxes[i]:SetText("MS")
 			MSBoxes[i]:SetTextInsets(8, 0, 0, 0)
 			-- Texture
@@ -127,7 +128,7 @@ function CreateMainFrame(self)
 			OSBoxes[i]:SetMultiLine(false)
 			OSBoxes[i]:SetAutoFocus(false) -- dont automatically focus
 			OSBoxes[i]:SetFontObject("ChatFontNormal")
-			OSBoxes[i]:SetMaxLetters(12)
+			OSBoxes[i]:SetMaxLetters(2)
 			OSBoxes[i]:SetText("OS")
 			OSBoxes[i]:SetTextInsets(8, 0, 0, 0)
 			-- Texture
@@ -153,7 +154,7 @@ function CreateMainFrame(self)
 			TMOGBoxes[i]:SetMultiLine(false)
 			TMOGBoxes[i]:SetAutoFocus(false) -- dont automatically focus
 			TMOGBoxes[i]:SetFontObject("ChatFontNormal")
-			TMOGBoxes[i]:SetMaxLetters(12)
+			TMOGBoxes[i]:SetMaxLetters(2)
 			TMOGBoxes[i]:SetText("TM")
 			TMOGBoxes[i]:SetTextInsets(8, 0, 0, 0)
 			-- Texture
@@ -198,7 +199,21 @@ function CreateMainFrame(self)
 		})
 		ClearButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 		ClearButton:SetScript('OnClick', function()
-		   Sheet:Hide()
+		
+			StaticPopupDialogs["EXAMPLE_HELLOWORLD"] = {
+				text = "Clear loot sheet?",
+				button1 = "Yes",
+				button2 = "No",
+				OnAccept = function()
+					ClearAllBoxes(CharacterBoxes, MSBoxes, OSBoxes, TMOGBoxes)
+				end,
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+			}
+			StaticPopup_Show ("EXAMPLE_HELLOWORLD")
+		   
+		   
 		end)
 		
 		
@@ -217,3 +232,21 @@ function CreateMainFrame(self)
 	end
 	Sheet:Show()
 end
+
+
+function ClearAllBoxes(CharacterBoxes, MSBoxes, OSBoxes, TMOGBoxes)
+	
+	for i=1, 20 do
+	
+		CharacterBoxes[i]:SetText("")
+		MSBoxes[i]:SetText("")
+		OSBoxes[i]:SetText("")
+		TMOGBoxes[i]:SetText("")
+	
+	end
+	
+	
+end
+
+
+
