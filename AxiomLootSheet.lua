@@ -17,35 +17,32 @@ SlashCmdList["AxiomLootSheet"] = LootSheet
 --end
 
 function CreateMainFrame(self)
-	local base = CreateFrame("Frame", "AxiomLootSheetFrame", UIParent, "BasicFrameTemplateWithInset")
-	base:SetSize(800, 600)
-	base:EnableMouse(true)
-	base:SetMovable(true)
-	base:SetClampedToScreen(true)
-	base:SetPoint("CENTER")
-	base:RegisterForDrag("LeftButton")
-	base:SetScript("OnDragStart", AxiomLootSheetFrame.StartMoving)
-	base:SetScript("OnDragStop", AxiomLootSheetFrame.StopMovingOrSizing)
-
-	base.title = AxiomLootSheetFrame:CreateFontString(nil, "OVERLAY")
-	base.title:SetFontObject("GameFontHighlightLarge")
-	base.title:SetPoint("LEFT", AxiomLootSheetFrame.TitleBg, "LEFT", 5, 0)
-	base.title:SetText("Axiom Loot Sheet")
+	if not Sheet then
+		local f = CreateFrame("Frame", "Sheet", UIParent, "DialogBoxFrame")
+		f:SetPoint("CENTER")
+		f:SetSize(400, 1000)
+			
+		f:SetBackdrop({
+			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+			edgeSize = 16,
+			insets = { left = 8, right = 6, top = 8, bottom = 8 },
+		})
+		f:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+		
+		-- Movable
+		f:SetMovable(true)
+		f:SetClampedToScreen(true)
+		f:SetScript("OnMouseDown", function(self, button)
+			if button == "LeftButton" then
+				self:StartMoving()
+			end
+		end)
+		f:SetScript("OnMouseUp", f.StopMovingOrSizing)
+	end
 	
-	local e = CreateFrame("EditBox", "editbox", base)
-	e:SetMultiLine(true)
-	e:SetFontObject(ChatFontNormal)
-	e:SetWidth(300)
-	--s:SetScrollChild(e)
-	--- demo multi line text
-	e:SetPoint("CENTER")
-	e:SetText("line 1\nline 2\nline 3\nmore...\n\n\n\n\n\nanother one\n"
-	.."some very long...dsf v asdf a sdf asd df as df asdf a sdfd as ddf as df asd f asd fd asd f asdf LONG LINE\n\n\nsome more.\nlast!")
-	e:HighlightText() -- select all (if to be used for copy paste)
-	-- optional/just to close that frame
-	e:SetScript("OnEscapePressed", function()
-		s:Hide()
-	end)
+	Sheet:Show()
+	
 end
 
 -------------------------------------------
