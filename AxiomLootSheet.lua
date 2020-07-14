@@ -232,3 +232,97 @@ function ClearAllBoxes(CharacterBoxes, MSBoxes, OSBoxes, TMOGBoxes)
 	end
 end
 
+
+
+
+
+CreateFrame("Frame", "BossLootFrame", UIParent)
+
+BossLootFrame:SetPoint("CENTER")
+BossLootFrame:SetSize(100, 200)
+BossLootFrame:SetBackdrop({
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+	edgeSize = 16,
+	insets = { left = 8, right = 6, top = 8, bottom = 8 },
+})
+
+BossLootFrame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+-- Movable
+BossLootFrame:SetMovable(true)
+BossLootFrame:SetClampedToScreen(true)
+
+BossLootFrame:SetScript("OnMouseDown", function(self, button)
+	if button == "LeftButton" then
+		self:StartMoving()
+	end
+end)
+BossLootFrame:SetScript("OnMouseUp", BossLootFrame.StopMovingOrSizing)
+
+
+BossLootFrame:RegisterEvent("BOSS_KILL")
+BossLootFrame:SetScript("OnEvent", function(self, event, arg1)
+	if event == "BOSS_KILL" and arg1 == "AxiomLootSheet" then
+		BossLootFrame:Show()
+	end
+end)
+
+-----------------------------------------------------------------------------------------
+local CloseButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
+CloseButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', 0, 20)
+CloseButton:SetSize(75, 40)
+-- Texture
+CloseButton:SetText("Close")
+CloseButton:SetBackdrop({
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+	edgeSize = 16,
+	insets = { left = 8, right = 6, top = 8, bottom = 8 },
+})
+CloseButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+CloseButton:SetScript('OnClick', function()
+   BossLootFrame:Hide()
+end)
+
+BossLootFrame:Hide()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

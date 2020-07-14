@@ -1,5 +1,6 @@
 ## Interface: 80300
 ## Title: AxiomLootSheet
+## Author: Lypidius
 ## Notes: For Punkology <3
 ## Version: 1.0.0
 ## SavedVariables: CharacterStrings, MSStrings, OSStrings, TMOGStrings
