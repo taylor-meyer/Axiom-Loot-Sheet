@@ -239,7 +239,7 @@ end
 CreateFrame("Frame", "BossLootFrame", UIParent)
 
 BossLootFrame:SetPoint("CENTER")
-BossLootFrame:SetSize(200, 400)
+BossLootFrame:SetSize(300, 500)
 BossLootFrame:SetBackdrop({
 	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
@@ -252,6 +252,7 @@ BossLootFrame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 BossLootFrame:SetMovable(true)
 BossLootFrame:SetClampedToScreen(true)
 
+
 BossLootFrame:SetScript("OnMouseDown", function(self, button)
 	if button == "LeftButton" then
 		self:StartMoving()
@@ -259,11 +260,30 @@ BossLootFrame:SetScript("OnMouseDown", function(self, button)
 end)
 BossLootFrame:SetScript("OnMouseUp", BossLootFrame.StopMovingOrSizing)
 
-
+ofs = -50
 BossLootFrame:RegisterEvent("BOSS_KILL")
-BossLootFrame:SetScript("OnEvent", function(self, event, arg1)
+BossLootFrame:RegisterEvent("ENCOUNTER_LOOT_RECEIVED")
+BossLootFrame:SetScript("OnEvent", function(self, event, ...)
+
+	
+
 	if event == "BOSS_KILL" then
 		BossLootFrame:Show()
+		
+		
+	elseif event == "ENCOUNTER_LOOT_RECEIVED" then
+		local encounterID, itemID, itemLink, quantity, itemName, fileName = ...
+		
+		--print(encounterID .. " " .. itemID .. " " .. itemLink .. " " .. quantity .. " " .. itemName .. " " .. fileName)
+		
+		local LootLinkText = BossLootFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		LootLinkText:SetPoint("TOP", 0, ofs)
+		LootLinkText:SetText(itemLink .. " " .. itemName)
+		
+		ofs = ofs - 25
+		
+		
+		
 	end
 end)
 
@@ -283,6 +303,10 @@ CloseButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 CloseButton:SetScript('OnClick', function()
    BossLootFrame:Hide()
 end)
+
+local BossLootFrameText = BossLootFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+BossLootFrameText:SetPoint("TOP", 0, -25)
+BossLootFrameText:SetText("Loot:")
 
 BossLootFrame:Hide()
 
