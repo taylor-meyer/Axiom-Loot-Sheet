@@ -239,7 +239,7 @@ end
 CreateFrame("Frame", "BossLootFrame", UIParent)
 
 BossLootFrame:SetPoint("CENTER")
-BossLootFrame:SetSize(100, 200)
+BossLootFrame:SetSize(200, 400)
 BossLootFrame:SetBackdrop({
 	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
@@ -262,7 +262,7 @@ BossLootFrame:SetScript("OnMouseUp", BossLootFrame.StopMovingOrSizing)
 
 BossLootFrame:RegisterEvent("BOSS_KILL")
 BossLootFrame:SetScript("OnEvent", function(self, event, arg1)
-	if event == "BOSS_KILL" and arg1 == "AxiomLootSheet" then
+	if event == "BOSS_KILL" then
 		BossLootFrame:Show()
 	end
 end)
