@@ -251,6 +251,7 @@ BossLootFrame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 -- Movable
 BossLootFrame:SetMovable(true)
 BossLootFrame:SetClampedToScreen(true)
+BossLootFrame:SetHyperlinksEnabled()
 
 
 BossLootFrame:SetScript("OnMouseDown", function(self, button)
@@ -263,9 +264,11 @@ BossLootFrame:SetScript("OnMouseUp", BossLootFrame.StopMovingOrSizing)
 ofs = -50
 BossLootFrame:RegisterEvent("BOSS_KILL")
 BossLootFrame:RegisterEvent("ENCOUNTER_LOOT_RECEIVED")
-BossLootFrame:SetScript("OnEvent", function(self, event, ...)
 
-	
+
+
+LinkFrameTable = {}
+BossLootFrame:SetScript("OnEvent", function(self, event, ...)
 
 	if event == "BOSS_KILL" then
 		BossLootFrame:Show()
@@ -273,15 +276,56 @@ BossLootFrame:SetScript("OnEvent", function(self, event, ...)
 		
 	elseif event == "ENCOUNTER_LOOT_RECEIVED" then
 		local encounterID, itemID, itemLink, quantity, itemName, fileName = ...
-		
 		--print(encounterID .. " " .. itemID .. " " .. itemLink .. " " .. quantity .. " " .. itemName .. " " .. fileName)
+
+		i = 1
 		
-		local LootLinkText = BossLootFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-		LootLinkText:SetPoint("TOP", 0, ofs)
-		LootLinkText:SetText(itemLink .. " " .. itemName)
 		
+		
+		--------------
+		-- make link frame, would be a subset of another frame later
+		local lf = CreateFrame("Frame", "LinkFrame", BossLootFrame)
+		lf:SetPoint("TOP", 50, ofs)
+		lf:SetSize(50,10)
+
+
+
+
+
+
+		-- fonstring with item
+		local ItemLinkText = lf:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		ItemLinkText:SetText(itemLink)
+		ItemLinkText:SetPoint("CENTER")
+
+
+		lf:EnableMouse(true)
+
+		--
+
+		lf:HookScript("OnEnter", function()
+		  if (itemLink) then
+			GameTooltip:SetOwner(lf, "ANCHOR_TOP")
+			GameTooltip:SetHyperlink(itemLink)
+			GameTooltip:Show()
+		  end
+		end)
+
+		lf:HookScript("OnLeave", function()
+		  GameTooltip:Hide()
+		end)
+		
+		LinkFrame:Show()
+		
+		-- make character font string1
+		local CharacterText = BossLootFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		CharacterText:SetPoint("TOP", -100, ofs)
+		CharacterText:SetText(itemName)
+		
+		
+		LinkFrameTable[i] = lf
 		ofs = ofs - 25
-		
+		i = i + 1
 		
 		
 	end
@@ -309,44 +353,4 @@ BossLootFrameText:SetPoint("TOP", 0, -25)
 BossLootFrameText:SetText("Loot:")
 
 BossLootFrame:Hide()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
