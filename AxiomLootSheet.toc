@@ -2,7 +2,7 @@
 ## Title: AxiomLootSheet
 ## Author: Lypidius
 ## Notes: For Punkology <3
-## Version: 1.0.0
+## Version: 1.0.1
 ## SavedVariables: CharacterStrings, MSStrings, OSStrings, TMOGStrings
 
 AxiomLootSheet.lua

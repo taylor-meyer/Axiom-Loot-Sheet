@@ -1,12 +1,21 @@
-local testFrame = CreateFrame("Frame")
-testFrame:RegisterEvent("ADDON_LOADED")
-testFrame:RegisterEvent("PLAYER_LOGOUT")
+CharacterTable = {}
+ItemLinkTable = {}
+ItemTextTable = {}
+CheckButtonsTable = {}
+ofs = -50
 
-testFrame:SetScript("OnEvent", function(self, event, arg1)
+
+
+------------------------------------------------------------------------------------------
+local SavedVariablesFrame = CreateFrame("Frame")
+SavedVariablesFrame:RegisterEvent("ADDON_LOADED")
+SavedVariablesFrame:RegisterEvent("PLAYER_LOGOUT")
+
+SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 	if event == "ADDON_LOADED" and arg1 == "AxiomLootSheet" then
 		-- Our saved variables have been loaded
 		if CharacterStrings == nil then
-			print("Character strings are nil")
+			--print("Character strings are nil")
 			-- This is the first time this addon is loaded; set SVs to default values
 			CharacterStrings = {}
 			MSStrings = {}
@@ -30,7 +39,7 @@ testFrame:SetScript("OnEvent", function(self, event, arg1)
 			end
 	end
 end)
-
+------------------------------------------------------------------------------------------
 
 
 -------------------------------------------
@@ -236,10 +245,16 @@ end
 
 
 
+
+
+-----------------------------------------------------------------------------------------
+-- LOOT FRAME --
+-----------------------------------------------------------------------------------------
+
 CreateFrame("Frame", "BossLootFrame", UIParent)
 
 BossLootFrame:SetPoint("CENTER")
-BossLootFrame:SetSize(300, 500)
+BossLootFrame:SetSize(600, 500)
 BossLootFrame:SetBackdrop({
 	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
@@ -248,7 +263,6 @@ BossLootFrame:SetBackdrop({
 })
 
 BossLootFrame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
--- Movable
 BossLootFrame:SetMovable(true)
 BossLootFrame:SetClampedToScreen(true)
 BossLootFrame:SetHyperlinksEnabled()
@@ -260,14 +274,9 @@ BossLootFrame:SetScript("OnMouseDown", function(self, button)
 	end
 end)
 BossLootFrame:SetScript("OnMouseUp", BossLootFrame.StopMovingOrSizing)
-
-ofs = -50
 BossLootFrame:RegisterEvent("BOSS_KILL")
 BossLootFrame:RegisterEvent("ENCOUNTER_LOOT_RECEIVED")
 
-
-
-LinkFrameTable = {}
 BossLootFrame:SetScript("OnEvent", function(self, event, ...)
 
 	if event == "BOSS_KILL" then
@@ -277,63 +286,102 @@ BossLootFrame:SetScript("OnEvent", function(self, event, ...)
 	elseif event == "ENCOUNTER_LOOT_RECEIVED" then
 		local encounterID, itemID, itemLink, quantity, itemName, fileName = ...
 		--print(encounterID .. " " .. itemID .. " " .. itemLink .. " " .. quantity .. " " .. itemName .. " " .. fileName)
-
-		i = 1
 		
+		local TableItr = 1
 		
+		-- Character name
+		for i=1, 10 do
+			if CharacterTable[i]:GetText() == " " then
+				print("inside if")
+				TableItr = i
+				print("i: " .. i)
+				print("tableitr " .. TableItr)
+				CharacterTable[TableItr]:SetText(itemName)
+				break
+			end
+		end
 		
-		--------------
-		-- make link frame, would be a subset of another frame later
-		local lf = CreateFrame("Frame", "LinkFrame", BossLootFrame)
-		lf:SetPoint("TOP", 50, ofs)
-		lf:SetSize(50,10)
-
-
-
-
-
-
-		-- fonstring with item
-		local ItemLinkText = lf:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-		ItemLinkText:SetText(itemLink)
-		ItemLinkText:SetPoint("CENTER")
-
-
-		lf:EnableMouse(true)
-
-		--
-
-		lf:HookScript("OnEnter", function()
+		-- Set Text
+		ItemTextTable[TableItr]:SetText(itemLink)
+		
+		-- Mouse over script
+		ItemLinkTable[TableItr]:HookScript("OnEnter", function()
 		  if (itemLink) then
-			GameTooltip:SetOwner(lf, "ANCHOR_TOP")
+			GameTooltip:SetOwner(ItemLinkTable[TableItr], "ANCHOR_TOP")
 			GameTooltip:SetHyperlink(itemLink)
 			GameTooltip:Show()
 		  end
 		end)
-
-		lf:HookScript("OnLeave", function()
+		 
+		ItemLinkTable[TableItr]:HookScript("OnLeave", function()
 		  GameTooltip:Hide()
 		end)
 		
-		LinkFrame:Show()
-		
-		-- make character font string1
-		local CharacterText = BossLootFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-		CharacterText:SetPoint("TOP", -100, ofs)
-		CharacterText:SetText(itemName)
-		
-		
-		LinkFrameTable[i] = lf
-		ofs = ofs - 25
-		i = i + 1
-		
-		
+		--[=====[ 
+		-- CheckButtons
+		-- Check buttons done here because we only want them to appear
+		-- if there was loot, not 10 by themselves
+		local cb = CreateFrame("CheckButton", "AnnounceCheckButton", BossLootFrame, "ChatConfigCheckButtonTemplate")
+		cb:SetPoint("TOPRIGHT", -15, ofs + 7)
+		cb:SetChecked(false)
+		cb:HookScript("OnClick", function()
+			--do stuff
+			if cb:GetChecked() == true then
+				cb:SetChecked(false)
+			else
+				cb:SetChecked(true)
+			end
+		end)
+		CheckButtonsTable[TableIterator] = cb
+		--]=====]
+
+
 	end
 end)
 
+
+
+-----------------------------------------------------------------------------------------
+-- SUB LOOT FRAMES --
+-----------------------------------------------------------------------------------------
+--[=====[
+CharacterTable = {}
+ItemLinkTable = {}
+ItemTextTable = {}
+CheckButtonTables = {}
+--]=====]
+for i=1, 10 do
+
+	local CharacterFontString = BossLootFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	CharacterFontString:SetPoint("TOPLEFT", 15, ofs)
+	CharacterFontString:SetText(" ")
+	CharacterTable[i] = CharacterFontString
+	
+	local ItemLinkFrame = CreateFrame("Frame", "LinkFrame", BossLootFrame)
+	ItemLinkFrame:SetPoint("TOP", 0, ofs)
+	ItemLinkFrame:SetSize(50,10)
+	ItemLinkFrame:EnableMouse(true)
+	
+	
+	local ItemLinkText = ItemLinkFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	ItemLinkText:SetPoint("CENTER")
+	
+	ItemLinkTable[i] = ItemLinkFrame
+	ItemTextTable[i] = ItemLinkText
+
+	ofs = ofs - 25
+end
+
+
+
+
+
+
+
+-- close button
 -----------------------------------------------------------------------------------------
 local CloseButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
-CloseButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', 0, 20)
+CloseButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', -50, 20)
 CloseButton:SetSize(75, 40)
 -- Texture
 CloseButton:SetText("Close")
@@ -345,12 +393,70 @@ CloseButton:SetBackdrop({
 })
 CloseButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 CloseButton:SetScript('OnClick', function()
-   BossLootFrame:Hide()
+	BossLootFrame:Hide()
+	ofs = -50
+	-- TODO
+	-- clear frame info
+	
 end)
 
 local BossLootFrameText = BossLootFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 BossLootFrameText:SetPoint("TOP", 0, -25)
 BossLootFrameText:SetText("Loot:")
 
+
+
+
+--- raid warning button
+-----------------------------------------------------------------------------------------
+LootAnnounceButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
+LootAnnounceButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', 50, 20)
+LootAnnounceButton:SetSize(85, 40)
+-- Texture
+LootAnnounceButton:SetText("Announce")
+LootAnnounceButton:SetBackdrop({
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+	edgeSize = 16,
+	insets = { left = 8, right = 6, top = 8, bottom = 8 },
+})
+LootAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+LootAnnounceButton:SetScript('OnClick', function()
+   RWmsg = ""
+   -- announce loop
+   for i=1, table.getn(CheckButtonTables) do
+		-- add item to msg if checkbox is checked
+		if CheckButtonTables[i]:GetChecked() == true then
+			--print("loop says true")
+			RWmsg = RWmsg .. ItemLinkTable[i]
+		else
+			--print("loop says false")
+		end
+   end
+   SendChatMessage(RWmsg, "RAID_WARNING", nil, "channel");
+end)
+
+
+
+------------------------------------------------------------------------------------
 BossLootFrame:Hide()
+------------------------------------------------------------------------------------
+
+
+--[=====[ 
+-- code I found online to generate an item link from equipped mainhand weapon
+local mainHandLink = GetInventoryItemLink("player",GetInventorySlotInfo("MainHandSlot"))
+local _, itemLink, _, _, _, _, itemType = GetItemInfo(mainHandLink)
+-- send it to chat window to test it works and it does, you can click it in the window and see the item
+DEFAULT_CHAT_FRAME:AddMessage(itemLink)
+--]=====]
+
+
+-- table size
+ --print(     "table size: " ..         (table.getn(ItemLinkTable))    ) 
+ 
+ 
+
+
+
 
