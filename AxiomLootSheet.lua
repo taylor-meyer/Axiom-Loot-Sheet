@@ -1,10 +1,7 @@
+LinkTable = {}
+TextTable = {}
 CharacterTable = {}
-ItemLinkTable = {}
-ItemTextTable = {}
-CheckButtonsTable = {}
 ofs = -50
-
-
 
 ------------------------------------------------------------------------------------------
 local SavedVariablesFrame = CreateFrame("Frame")
@@ -51,7 +48,6 @@ local function LootSheet(msg)
 	CreateMainFrame()
 end
 SlashCmdList["AxiomLootSheet"] = LootSheet
-
 
 
 -------------------------------------------
@@ -243,139 +239,106 @@ end
 
 
 
-
-
-
-
 -----------------------------------------------------------------------------------------
 -- LOOT FRAME --
 -----------------------------------------------------------------------------------------
+local blf = CreateFrame("Frame", "BossLootFrame", UIParent)
 
-CreateFrame("Frame", "BossLootFrame", UIParent)
-
-BossLootFrame:SetPoint("CENTER")
-BossLootFrame:SetSize(600, 500)
-BossLootFrame:SetBackdrop({
+blf:SetPoint("CENTER")
+blf:SetSize(600, 500)
+blf:SetBackdrop({
 	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
 	edgeSize = 16,
 	insets = { left = 8, right = 6, top = 8, bottom = 8 },
 })
 
-BossLootFrame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-BossLootFrame:SetMovable(true)
-BossLootFrame:SetClampedToScreen(true)
-BossLootFrame:SetHyperlinksEnabled()
+blf:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+blf:SetMovable(true)
+blf:SetClampedToScreen(true)
+--blf:SetHyperlinksEnabled()
 
 
-BossLootFrame:SetScript("OnMouseDown", function(self, button)
+blf:SetScript("OnMouseDown", function(self, button)
 	if button == "LeftButton" then
 		self:StartMoving()
 	end
 end)
-BossLootFrame:SetScript("OnMouseUp", BossLootFrame.StopMovingOrSizing)
-BossLootFrame:RegisterEvent("BOSS_KILL")
-BossLootFrame:RegisterEvent("ENCOUNTER_LOOT_RECEIVED")
+blf:SetScript("OnMouseUp", BossLootFrame.StopMovingOrSizing)
 
-BossLootFrame:SetScript("OnEvent", function(self, event, ...)
+blf:RegisterEvent("BOSS_KILL")
+blf:RegisterEvent("ENCOUNTER_LOOT_RECEIVED")
+blf:RegisterEvent("PLAYER_LOGIN")
 
-	if event == "BOSS_KILL" then
-		BossLootFrame:Show()
-		
-		
-	elseif event == "ENCOUNTER_LOOT_RECEIVED" then
-		local encounterID, itemID, itemLink, quantity, itemName, fileName = ...
-		--print(encounterID .. " " .. itemID .. " " .. itemLink .. " " .. quantity .. " " .. itemName .. " " .. fileName)
-		
-		local TableItr = 1
-		
-		-- Character name
-		for i=1, 10 do
-			if CharacterTable[i]:GetText() == " " then
-				print("inside if")
-				TableItr = i
-				print("i: " .. i)
-				print("tableitr " .. TableItr)
-				CharacterTable[TableItr]:SetText(itemName)
-				break
-			end
-		end
-		
-		-- Set Text
-		ItemTextTable[TableItr]:SetText(itemLink)
-		
-		-- Mouse over script
-		ItemLinkTable[TableItr]:HookScript("OnEnter", function()
-		  if (itemLink) then
-			GameTooltip:SetOwner(ItemLinkTable[TableItr], "ANCHOR_TOP")
-			GameTooltip:SetHyperlink(itemLink)
-			GameTooltip:Show()
-		  end
-		end)
-		 
-		ItemLinkTable[TableItr]:HookScript("OnLeave", function()
-		  GameTooltip:Hide()
-		end)
-		
-		--[=====[ 
-		-- CheckButtons
-		-- Check buttons done here because we only want them to appear
-		-- if there was loot, not 10 by themselves
-		local cb = CreateFrame("CheckButton", "AnnounceCheckButton", BossLootFrame, "ChatConfigCheckButtonTemplate")
-		cb:SetPoint("TOPRIGHT", -15, ofs + 7)
-		cb:SetChecked(false)
-		cb:HookScript("OnClick", function()
-			--do stuff
-			if cb:GetChecked() == true then
-				cb:SetChecked(false)
-			else
-				cb:SetChecked(true)
-			end
-		end)
-		CheckButtonsTable[TableIterator] = cb
-		--]=====]
+local BossLootFrameText = BossLootFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+BossLootFrameText:SetPoint("TOP", 0, -25)
+BossLootFrameText:SetText("Loot:")
 
-
-	end
-end)
-
-
-
+blf:Hide()
 -----------------------------------------------------------------------------------------
--- SUB LOOT FRAMES --
------------------------------------------------------------------------------------------
---[=====[
-CharacterTable = {}
-ItemLinkTable = {}
-ItemTextTable = {}
-CheckButtonTables = {}
---]=====]
+
+
 for i=1, 10 do
 
 	local CharacterFontString = BossLootFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	CharacterFontString:SetPoint("TOPLEFT", 15, ofs)
 	CharacterFontString:SetText(" ")
 	CharacterTable[i] = CharacterFontString
-	
-	local ItemLinkFrame = CreateFrame("Frame", "LinkFrame", BossLootFrame)
+
+	local ItemLinkFrame = CreateFrame("Frame", "LinkFrame" .. i, BossLootFrame)
 	ItemLinkFrame:SetPoint("TOP", 0, ofs)
-	ItemLinkFrame:SetSize(50,10)
-	ItemLinkFrame:EnableMouse(true)
-	
+	ItemLinkFrame:SetSize(75,30)
+	--ItemLinkFrame:EnableMouse(true)
 	
 	local ItemLinkText = ItemLinkFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	ItemLinkText:SetPoint("CENTER")
 	
-	ItemLinkTable[i] = ItemLinkFrame
-	ItemTextTable[i] = ItemLinkText
+	LinkTable[i] = ItemLinkFrame
+	TextTable[i] = ItemLinkText
 
-	ofs = ofs - 25
+	ofs = ofs - 50
 end
 
 
 
+BossLootFrame:SetScript("OnEvent", function(self, event, ...)
 
+	if event == "BOSS_KILL" then
+		BossLootFrame:Show()
 
+	elseif event == "ENCOUNTER_LOOT_RECEIVED" then
+	
+		local encounterID, itemID, itemLink, quantity, itemName, fileName = ...
+		--print(encounterID .. " " .. itemID .. " " .. itemLink .. " " .. quantity .. " " .. itemName .. " " .. fileName)
+		
+		-- Character name
+		for i=1, 10 do
+			if CharacterTable[i]:GetText() == " " then
+				TableItr = i
+				CharacterTable[i]:SetText(itemName)
+				--CharacterTable[TableItr]:SetText(itemName)
+				break
+			end
+		end
+
+		-- Set Text
+		TextTable[TableItr]:SetText(itemLink)
+			
+		-- Mouse over script
+		LinkTable[TableItr]:HookScript("OnEnter", function()
+		  if (itemLink) then
+			GameTooltip:SetOwner(LinkTable[TableItr], "ANCHOR_TOP")
+			GameTooltip:SetHyperlink(itemLink)
+			GameTooltip:Show()
+		  end
+		end)
+		 
+		LinkTable[TableItr]:HookScript("OnLeave", function()
+		  GameTooltip:Hide()
+		end)
+		
+	end	
+end)
 
 
 -- close button
@@ -395,19 +358,14 @@ CloseButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 CloseButton:SetScript('OnClick', function()
 	BossLootFrame:Hide()
 	ofs = -50
-	-- TODO
-	-- clear frame info
-	
+	for i=1, 10 do
+		CharacterTable[i]:SetText(" ")
+		TextTable[i]:SetText(" ")
+	end
 end)
 
-local BossLootFrameText = BossLootFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-BossLootFrameText:SetPoint("TOP", 0, -25)
-BossLootFrameText:SetText("Loot:")
 
-
-
-
---- raid warning button
+--- raid warning button (currently does nothing)
 -----------------------------------------------------------------------------------------
 LootAnnounceButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
 LootAnnounceButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', 50, 20)
@@ -422,26 +380,8 @@ LootAnnounceButton:SetBackdrop({
 })
 LootAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 LootAnnounceButton:SetScript('OnClick', function()
-   RWmsg = ""
-   -- announce loop
-   for i=1, table.getn(CheckButtonTables) do
-		-- add item to msg if checkbox is checked
-		if CheckButtonTables[i]:GetChecked() == true then
-			--print("loop says true")
-			RWmsg = RWmsg .. ItemLinkTable[i]
-		else
-			--print("loop says false")
-		end
-   end
-   SendChatMessage(RWmsg, "RAID_WARNING", nil, "channel");
+	print("You pressed the announce button that does nothing!")
 end)
-
-
-
-------------------------------------------------------------------------------------
-BossLootFrame:Hide()
-------------------------------------------------------------------------------------
-
 
 --[=====[ 
 -- code I found online to generate an item link from equipped mainhand weapon
@@ -451,12 +391,5 @@ local _, itemLink, _, _, _, _, itemType = GetItemInfo(mainHandLink)
 DEFAULT_CHAT_FRAME:AddMessage(itemLink)
 --]=====]
 
-
 -- table size
- --print(     "table size: " ..         (table.getn(ItemLinkTable))    ) 
- 
- 
-
-
-
-
+--print(     "table size: " ..         (table.getn(ItemLinkTable))    )
