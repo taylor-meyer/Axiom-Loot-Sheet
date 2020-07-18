@@ -1,6 +1,8 @@
 LinkTable = {}
 TextTable = {}
+Items = {}
 CharacterTable = {}
+CheckButtons = {}
 ofs = -50
 
 ------------------------------------------------------------------------------------------
@@ -44,7 +46,7 @@ end)
 -------------------------------------------
 SLASH_AxiomLootSheet1 = "/axiom"
 local function LootSheet(msg)
-	print("Axiom is a Horde guild on MoonGuard-US.")
+	print("Here is your loot sheet, sir Punk.")
 	CreateMainFrame()
 end
 SlashCmdList["AxiomLootSheet"] = LootSheet
@@ -208,7 +210,7 @@ function CreateMainFrame(self)
 		ClearButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 		ClearButton:SetScript('OnClick', function()
 		
-			StaticPopupDialogs["EXAMPLE_HELLOWORLD"] = {
+			StaticPopupDialogs["CLEAR_SHEET"] = {
 				text = "Clear loot sheet?",
 				button1 = "Yes",
 				button2 = "No",
@@ -219,8 +221,7 @@ function CreateMainFrame(self)
 				whileDead = true,
 				hideOnEscape = true,
 			}
-			StaticPopup_Show ("EXAMPLE_HELLOWORLD")
-		   
+			StaticPopup_Show ("CLEAR_SHEET")
 		end)
 	end
 	Sheet:Show()
@@ -245,7 +246,7 @@ end
 local blf = CreateFrame("Frame", "BossLootFrame", UIParent)
 
 blf:SetPoint("CENTER")
-blf:SetSize(600, 500)
+blf:SetSize(350, 500)
 blf:SetBackdrop({
 	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
@@ -296,10 +297,19 @@ for i=1, 10 do
 	LinkTable[i] = ItemLinkFrame
 	TextTable[i] = ItemLinkText
 
+	local CheckButton = CreateFrame("CheckButton", "AnnounceCheckButton" .. i, BossLootFrame, "ChatConfigCheckButtonTemplate")
+	CheckButton:SetPoint("TOPRIGHT", -15, ofs + 7)
+	CheckButton.tooltip = "Up for roll"
+	CheckButton:SetChecked(false)
+	CheckButton:HookScript("OnClick", function()
+		-- do stuff
+	end)
+	
+	CheckButton:Hide()
+	CheckButtons[i] = CheckButton
+
 	ofs = ofs - 50
 end
-
-
 
 BossLootFrame:SetScript("OnEvent", function(self, event, ...)
 
@@ -337,6 +347,10 @@ BossLootFrame:SetScript("OnEvent", function(self, event, ...)
 		  GameTooltip:Hide()
 		end)
 		
+		CheckButtons[TableItr]:Show()
+		
+		Items[TableItr] = itemLink
+		
 	end	
 end)
 
@@ -354,33 +368,62 @@ CloseButton:SetBackdrop({
 	edgeSize = 16,
 	insets = { left = 8, right = 6, top = 8, bottom = 8 },
 })
-CloseButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+CloseButton:SetBackdropBorderColor(0, .44, .87, 0.5)
 CloseButton:SetScript('OnClick', function()
+
+	StaticPopupDialogs["CLOSE_WINDOW"] = {
+		text = "Close loot sheet? (Everything you see will enter the maw)",
+		button1 = "Yes",
+		button2 = "No",
+		OnAccept = function()
+			CloseLootSheet()
+		end,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,
+	}
+	StaticPopup_Show ("CLOSE_WINDOW")
+end)
+
+-- Clears all EditBoxes
+function CloseLootSheet()
 	BossLootFrame:Hide()
 	ofs = -50
 	for i=1, 10 do
 		CharacterTable[i]:SetText(" ")
 		TextTable[i]:SetText(" ")
-	end
-end)
+		CheckButtons[i]:SetChecked(false)
+		CheckButtons[i]:Hide()
+		Items = {}
+	end	
+end
 
 
---- raid warning button (currently does nothing)
+--- raid warning button
 -----------------------------------------------------------------------------------------
 LootAnnounceButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
 LootAnnounceButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', 50, 20)
 LootAnnounceButton:SetSize(85, 40)
--- Texture
 LootAnnounceButton:SetText("Announce")
 LootAnnounceButton:SetBackdrop({
 	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
 	edgeSize = 16,
 	insets = { left = 8, right = 6, top = 8, bottom = 8 },
 })
 LootAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 LootAnnounceButton:SetScript('OnClick', function()
-	print("You pressed the announce button that does nothing!")
+   RWmsg = " "
+   -- announce loop
+   for i=1, 10 do
+		-- add item to msg if checkbox is checked
+		if CheckButtons[i]:GetChecked() == true then
+			RWmsg = RWmsg .. Items[i]
+		end
+   end
+   
+   SendChatMessage(RWmsg, "RAID_WARNING", nil, "channel");
+   
 end)
 
 --[=====[ 
