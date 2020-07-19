@@ -4,6 +4,7 @@ Items = {}
 CharacterTable = {}
 CheckButtons = {}
 ofs = -50
+SheetIterator = 1
 
 ------------------------------------------------------------------------------------------
 local SavedVariablesFrame = CreateFrame("Frame")
@@ -20,6 +21,7 @@ SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 			MSStrings = {}
 			OSStrings = {}
 			TMOGStrings = {}
+			
 			for i=1, 20 do
 				CharacterStrings[i] = "Character"
 				MSStrings[i] = "MS"
@@ -59,11 +61,13 @@ function CreateMainFrame(self)
 
 	if not Sheet then
 	
+		local sheety = 80
+	
 		------------------------------------------------------------------------------------------
 		-- main sheet
 		local f = CreateFrame("Frame", "Sheet", UIParent)
-		f:SetPoint("CENTER")
-		f:SetSize(283, 1000)
+		f:SetPoint("TOP", 0, -25)
+		f:SetSize(300, sheety)
 		f:SetBackdrop({
 			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
@@ -81,12 +85,39 @@ function CreateMainFrame(self)
 		end)
 		f:SetScript("OnMouseUp", f.StopMovingOrSizing)
 		-----------------------------------------------------------------------------------------
-	
+		
+		-- add button
+		local AddRowButton = CreateFrame('Button', nil, Sheet, "UIPanelButtonTemplate")
+		AddRowButton:SetPoint('TOPLEFT', Sheet, 'TOPLEFT', 12, -25)
+		AddRowButton:SetSize(25, 25)
+		AddRowButton:SetText("+")
+		AddRowButton:SetBackdrop({
+			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+			edgeSize = 16,
+			insets = { left = 8, right = 6, top = 8, bottom = 8 },
+		})
+		AddRowButton:SetBackdropBorderColor(0, .44, .87, 0.5)
+		AddRowButton:SetScript('OnClick', function()
+		
+			-- TODO ADD ROW
+			if SheetIterator < 21 then
+				CharacterBoxes[SheetIterator]:Show()
+				MSBoxes[SheetIterator]:Show()
+				OSBoxes[SheetIterator]:Show()
+				TMOGBoxes[SheetIterator]:Show()
+				SheetIterator = SheetIterator + 1
+				sheety = sheety + 50
+				Sheet:SetSize(300, sheety)
+				Sheet:Show()
+			end
+		end)	
+		
 		-----------------------------------------------------------------------------------------
 		-- boxes
 		CharacterBoxes = {}
 		CharacterBoxes[1] = CreateFrame("EditBox", nil, Sheet)
-		CharacterBoxes[1]:SetPoint("TOPLEFT", Sheet, "TOPLEFT", 25, -25)
+		CharacterBoxes[1]:SetPoint("TOPLEFT", Sheet, "TOPLEFT", 35, -25)
 		for i=2, 20 do
 			CharacterBoxes[i] = CreateFrame("EditBox", nil, Sheet)
 			CharacterBoxes[i]:SetPoint("TOP", CharacterBoxes[i-1], "BOTTOM", 0, -5)
@@ -108,6 +139,7 @@ function CreateMainFrame(self)
 				insets = { left = 8, right = 6, top = 8, bottom = 8 },
 			})
 			CharacterBoxes[i]:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+			CharacterBoxes[i]:Hide()
 		end
 		-----------------------------------------------------------------------------------------
 		
@@ -130,6 +162,7 @@ function CreateMainFrame(self)
 				insets = { left = 8, right = 6, top = 8, bottom = 8 },
 			})
 			MSBoxes[i]:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+			MSBoxes[i]:Hide()
 		end
 		-----------------------------------------------------------------------------------------
 		
@@ -154,6 +187,7 @@ function CreateMainFrame(self)
 				insets = { left = 8, right = 6, top = 8, bottom = 8 },
 			})
 			OSBoxes[i]:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+			OSBoxes[i]:Hide()
 		end
 		-----------------------------------------------------------------------------------------
 		
@@ -176,6 +210,7 @@ function CreateMainFrame(self)
 				insets = { left = 8, right = 6, top = 8, bottom = 8 },
 			})
 			TMOGBoxes[i]:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+			TMOGBoxes[i]:Hide()
 		end
 		-----------------------------------------------------------------------------------------
 		
