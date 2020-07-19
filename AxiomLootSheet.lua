@@ -413,16 +413,15 @@ LootAnnounceButton:SetBackdrop({
 })
 LootAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 LootAnnounceButton:SetScript('OnClick', function()
-   RWmsg = " "
    -- announce loop
    for i=1, 10 do
 		-- add item to msg if checkbox is checked
 		if CheckButtons[i]:GetChecked() == true then
-			RWmsg = RWmsg .. Items[i]
+			SendChatMessage(Items[i], "RAID_WARNING", nil, "channel");
 		end
    end
    
-   SendChatMessage(RWmsg, "RAID_WARNING", nil, "channel");
+   
    
 end)
 
