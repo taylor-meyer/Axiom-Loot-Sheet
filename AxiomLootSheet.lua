@@ -4,7 +4,7 @@ Items = {}
 CharacterTable = {}
 CheckButtons = {}
 ofs = -50
-SheetIterator = 1
+SheetIterator = 1 -- This is currently a saved variable and it doesn't need to be, future fix
 
 ------------------------------------------------------------------------------------------
 local SavedVariablesFrame = CreateFrame("Frame")
@@ -33,7 +33,7 @@ SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 		print("PLAYER_LOGOUT")
             -- Save the values when logout/reload
             for i=1, 20 do
-				SheetIterator = 1
+				SheetIterator = 1 -- Band-aid for saved variables
 				CharacterStrings[i] = CharacterBoxes[i]:GetText()
 				MSStrings[i] = MSBoxes[i]:GetText()
 				OSStrings[i] = OSBoxes[i]:GetText()
@@ -459,6 +459,77 @@ LootAnnounceButton:SetScript('OnClick', function()
    
    
    
+end)
+
+
+--- ms roll button
+-----------------------------------------------------------------------------------------
+MSAnnounceButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
+MSAnnounceButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', -110, 70)
+MSAnnounceButton:SetSize(85, 40)
+MSAnnounceButton:SetText("ROLL MS")
+MSAnnounceButton:SetBackdrop({
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+	edgeSize = 16,
+	insets = { left = 8, right = 6, top = 8, bottom = 8 },
+})
+MSAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+MSAnnounceButton:SetScript('OnClick', function()
+	print("ms announce")
+end)
+
+
+--- os roll button
+-----------------------------------------------------------------------------------------
+OSAnnounceButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
+OSAnnounceButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', -20, 70)
+OSAnnounceButton:SetSize(85, 40)
+OSAnnounceButton:SetText("ROLL OS")
+OSAnnounceButton:SetBackdrop({
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+	edgeSize = 16,
+	insets = { left = 8, right = 6, top = 8, bottom = 8 },
+})
+OSAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+OSAnnounceButton:SetScript('OnClick', function()
+	print("os announce")
+end)
+
+
+--- tmog roll button
+-----------------------------------------------------------------------------------------
+TMAnnounceButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
+TMAnnounceButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', 70, 70)
+TMAnnounceButton:SetSize(85, 40)
+TMAnnounceButton:SetText("ROLL TM")
+TMAnnounceButton:SetBackdrop({
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+	edgeSize = 16,
+	insets = { left = 8, right = 6, top = 8, bottom = 8 },
+})
+TMAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+TMAnnounceButton:SetScript('OnClick', function()
+	print("tm announce")
+end)
+
+--- 5 seconds countdown button
+-----------------------------------------------------------------------------------------
+CountdownButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
+CountdownButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', 140, 70)
+CountdownButton:SetSize(35, 40)
+CountdownButton:SetText("5")
+CountdownButton:SetBackdrop({
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+	edgeSize = 16,
+	insets = { left = 8, right = 6, top = 8, bottom = 8 },
+})
+CountdownButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+CountdownButton:SetScript('OnClick', function()
+	print("5 4 3 2 1")
 end)
 
 --[=====[ 
