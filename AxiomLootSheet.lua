@@ -33,6 +33,7 @@ SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 		print("PLAYER_LOGOUT")
             -- Save the values when logout/reload
             for i=1, 20 do
+				SheetIterator = 1
 				CharacterStrings[i] = CharacterBoxes[i]:GetText()
 				MSStrings[i] = MSBoxes[i]:GetText()
 				OSStrings[i] = OSBoxes[i]:GetText()
