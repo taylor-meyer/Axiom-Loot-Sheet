@@ -323,7 +323,7 @@ for i=1, 10 do
 	CharacterTable[i] = CharacterFontString
 
 	local ItemLinkFrame = CreateFrame("Frame", "LinkFrame" .. i, BossLootFrame)
-	ItemLinkFrame:SetPoint("TOP", 0, ofs)
+	ItemLinkFrame:SetPoint("TOP", 0, ofs+10)
 	ItemLinkFrame:SetSize(75,30)
 	--ItemLinkFrame:EnableMouse(true)
 	
@@ -476,7 +476,15 @@ MSAnnounceButton:SetBackdrop({
 })
 MSAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 MSAnnounceButton:SetScript('OnClick', function()
-	print("ms announce")
+	print("MS Roll Button Clicked")
+   -- roll loop
+	for i=1, 10 do
+		-- add item to msg if checkbox is checked
+		if CheckButtons[i]:GetChecked() == true then
+			SendChatMessage("ROLL FOR MS: " .. Items[i], "RAID_WARNING", nil, "channel");
+			break;
+		end
+	end
 end)
 
 
@@ -494,7 +502,15 @@ OSAnnounceButton:SetBackdrop({
 })
 OSAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 OSAnnounceButton:SetScript('OnClick', function()
-	print("os announce")
+	print("OS Roll Button Clicked")
+	-- roll loop
+	for i=1, 10 do
+		-- add item to msg if checkbox is checked
+		if CheckButtons[i]:GetChecked() == true then
+			SendChatMessage("ROLL FOR OS: " .. Items[i], "RAID_WARNING", nil, "channel");
+			break;
+		end
+	end
 end)
 
 
@@ -512,7 +528,15 @@ TMAnnounceButton:SetBackdrop({
 })
 TMAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 TMAnnounceButton:SetScript('OnClick', function()
-	print("tm announce")
+	print("TM Roll Button Clicked")
+	-- roll loop
+	for i=1, 10 do
+		-- add item to msg if checkbox is checked
+		if CheckButtons[i]:GetChecked() == true then
+			SendChatMessage("ROLL FOR TMOG: " .. Items[i], "RAID_WARNING", nil, "channel");
+			break;
+		end
+	end
 end)
 
 --- 5 seconds countdown button
@@ -529,7 +553,7 @@ CountdownButton:SetBackdrop({
 })
 CountdownButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 CountdownButton:SetScript('OnClick', function()
-	print("5 4 3 2 1")
+	print("Countdown Button Clicked")
 end)
 
 --[=====[ 
