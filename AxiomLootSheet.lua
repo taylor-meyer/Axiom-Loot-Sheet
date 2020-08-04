@@ -5,6 +5,7 @@ CharacterTable = {}
 CheckButtons = {}
 ofs = -50
 SheetIterator = 1 -- This is currently a saved variable and it doesn't need to be, future fix
+countTimer = 5
 
 ------------------------------------------------------------------------------------------
 local SavedVariablesFrame = CreateFrame("Frame")
@@ -453,7 +454,7 @@ LootAnnounceButton:SetScript('OnClick', function()
    for i=1, 10 do
 		-- add item to msg if checkbox is checked
 		if CheckButtons[i]:GetChecked() == true then
-			SendChatMessage(Items[i], "RAID_WARNING", nil, "channel");
+			SendChatMessage(Items[i], "SAY", nil, "channel");
 		end
    end
    
@@ -481,7 +482,7 @@ MSAnnounceButton:SetScript('OnClick', function()
 	for i=1, 10 do
 		-- add item to msg if checkbox is checked
 		if CheckButtons[i]:GetChecked() == true then
-			SendChatMessage("ROLL FOR MS: " .. Items[i], "RAID_WARNING", nil, "channel");
+			SendChatMessage("ROLL FOR MS: " .. Items[i], "SAY", nil, "channel");
 			break;
 		end
 	end
@@ -507,7 +508,7 @@ OSAnnounceButton:SetScript('OnClick', function()
 	for i=1, 10 do
 		-- add item to msg if checkbox is checked
 		if CheckButtons[i]:GetChecked() == true then
-			SendChatMessage("ROLL FOR OS: " .. Items[i], "RAID_WARNING", nil, "channel");
+			SendChatMessage("ROLL FOR OS: " .. Items[i], "SAY", nil, "channel");
 			break;
 		end
 	end
@@ -533,7 +534,7 @@ TMAnnounceButton:SetScript('OnClick', function()
 	for i=1, 10 do
 		-- add item to msg if checkbox is checked
 		if CheckButtons[i]:GetChecked() == true then
-			SendChatMessage("ROLL FOR TMOG: " .. Items[i], "RAID_WARNING", nil, "channel");
+			SendChatMessage("ROLL FOR TMOG: " .. Items[i], "SAY", nil, "channel");
 			break;
 		end
 	end
@@ -554,7 +555,18 @@ CountdownButton:SetBackdrop({
 CountdownButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 CountdownButton:SetScript('OnClick', function()
 	print("Countdown Button Clicked")
+	Countdown()
+	C_Timer.After(6, function() countTimer = 5 end)
+	
 end)
+
+function Countdown()
+	SendChatMessage(countTimer, "SAY", nil, "channel");
+	if countTimer ~=1 then
+		countTimer = countTimer - 1
+		C_Timer.After(1, Countdown)
+	end
+end
 
 --[=====[ 
 -- code I found online to generate an item link from equipped mainhand weapon
