@@ -6,6 +6,8 @@ CheckButtons = {}
 ofs = -50
 SheetIterator = 1 -- This is currently a saved variable and it doesn't need to be, future fix
 countTimer = 5
+highestScore = 0
+currentWinner = 1
 
 ------------------------------------------------------------------------------------------
 local SavedVariablesFrame = CreateFrame("Frame")
@@ -606,6 +608,9 @@ for i=1, 30 do
 	score:SetText(" ")
 	
 	RollScores[i] = score
+	
+	RollNames[i]:SetTextColor(1, 1, 1, 1)
+	RollScores[i]:SetTextColor(1, 1, 1, 1)
 end
 
 --event
@@ -627,12 +632,29 @@ RollFrame:SetScript("OnEvent", function(self, event, ...)
 					RollNames[i]:SetText(author)
 					RollScores[i]:SetText(rollResult)
 					--CharacterTable[TableItr]:SetText(itemName)
+					
+					if tonumber(rollResult) > highestScore then
+						highestScore = tonumber(rollResult) -- set winner to green
+						RollNames[i]:SetTextColor(0, 1, 0, 1)
+						RollScores[i]:SetTextColor(0, 1, 0, 1)
+						currentWinner = i -- new winner
+						
+						for k=1,i-1 do
+							RollNames[k]:SetTextColor(1, 1, 1, 1)
+							RollScores[k]:SetTextColor(1, 1, 1, 1)
+						end
+					
+				
+					
+					
+					elseif tonumber(rollResult) == highestScore then
+						RollNames[i]:SetTextColor(0, 0, 1, 1)
+						RollScores[i]:SetTextColor(0, 0, 1, 1)
+					end
+					
 					break
 				end
 			end
-				
-			
-			
 		end
 	end
 end)
@@ -658,6 +680,8 @@ end)
 
 -- Clears all EditBoxes
 function ClearRollFrame()
+	highestScore = 0
+	currentWinner = 1
 	for i=1,30 do
 		RollNames[i]:SetText(" ")
 		RollScores[i]:SetText(" ")
