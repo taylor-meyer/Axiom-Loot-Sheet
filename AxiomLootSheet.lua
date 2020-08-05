@@ -99,7 +99,7 @@ function CreateMainFrame(self)
 			edgeSize = 16,
 			insets = { left = 8, right = 6, top = 8, bottom = 8 },
 		})
-		AddRowButton:SetBackdropBorderColor(0, .44, .87, 0.5)
+		AddRowButton:SetBackdropBorderColor(0, 0, 0, 0)
 		AddRowButton:SetScript('OnClick', function()
 		
 			-- TODO ADD ROW
@@ -109,7 +109,7 @@ function CreateMainFrame(self)
 				OSBoxes[SheetIterator]:Show()
 				TMOGBoxes[SheetIterator]:Show()
 				SheetIterator = SheetIterator + 1
-				sheety = sheety + 50
+				sheety = sheety + 45
 				Sheet:SetSize(300, sheety)
 				Sheet:Show()
 			end
@@ -228,7 +228,7 @@ function CreateMainFrame(self)
 			edgeSize = 16,
 			insets = { left = 8, right = 6, top = 8, bottom = 8 },
 		})
-		CloseButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+		CloseButton:SetBackdropBorderColor(0, 0, 0, 0)
 		CloseButton:SetScript('OnClick', function()
 		   Sheet:Hide()
 		end)
@@ -244,7 +244,7 @@ function CreateMainFrame(self)
 			edgeSize = 16,
 			insets = { left = 8, right = 6, top = 8, bottom = 8 },
 		})
-		ClearButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+		ClearButton:SetBackdropBorderColor(0, 0, 0, 0)
 		ClearButton:SetScript('OnClick', function()
 		
 			StaticPopupDialogs["CLEAR_SHEET"] = {
@@ -394,7 +394,7 @@ end)
 
 -- close button
 -----------------------------------------------------------------------------------------
-local CloseButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
+CloseButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
 CloseButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', -50, 20)
 CloseButton:SetSize(75, 40)
 -- Texture
@@ -405,7 +405,7 @@ CloseButton:SetBackdrop({
 	edgeSize = 16,
 	insets = { left = 8, right = 6, top = 8, bottom = 8 },
 })
-CloseButton:SetBackdropBorderColor(0, .44, .87, 0.5)
+CloseButton:SetBackdropBorderColor(0, 0, 0, 0)
 CloseButton:SetScript('OnClick', function()
 
 	StaticPopupDialogs["CLOSE_WINDOW"] = {
@@ -422,7 +422,7 @@ CloseButton:SetScript('OnClick', function()
 	StaticPopup_Show ("CLOSE_WINDOW")
 end)
 
--- Clears all EditBoxes
+-- Clears loot sheet
 function CloseLootSheet()
 	BossLootFrame:Hide()
 	ofs = -50
@@ -433,6 +433,7 @@ function CloseLootSheet()
 		CheckButtons[i]:Hide()
 		Items = {}
 	end	
+	ClearRollFrame()
 end
 
 
@@ -448,7 +449,7 @@ LootAnnounceButton:SetBackdrop({
 	edgeSize = 16,
 	insets = { left = 8, right = 6, top = 8, bottom = 8 },
 })
-LootAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+LootAnnounceButton:SetBackdropBorderColor(0, 0, 0, 0)
 LootAnnounceButton:SetScript('OnClick', function()
    -- announce loop
    for i=1, 10 do
@@ -457,9 +458,6 @@ LootAnnounceButton:SetScript('OnClick', function()
 			SendChatMessage(Items[i], "SAY", nil, "channel");
 		end
    end
-   
-   
-   
 end)
 
 
@@ -475,7 +473,7 @@ MSAnnounceButton:SetBackdrop({
 	edgeSize = 16,
 	insets = { left = 8, right = 6, top = 8, bottom = 8 },
 })
-MSAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+MSAnnounceButton:SetBackdropBorderColor(0, 0, 0, 0)
 MSAnnounceButton:SetScript('OnClick', function()
 	print("MS Roll Button Clicked")
    -- roll loop
@@ -501,7 +499,7 @@ OSAnnounceButton:SetBackdrop({
 	edgeSize = 16,
 	insets = { left = 8, right = 6, top = 8, bottom = 8 },
 })
-OSAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+OSAnnounceButton:SetBackdropBorderColor(0, 0, 0, 0)
 OSAnnounceButton:SetScript('OnClick', function()
 	print("OS Roll Button Clicked")
 	-- roll loop
@@ -527,7 +525,7 @@ TMAnnounceButton:SetBackdrop({
 	edgeSize = 16,
 	insets = { left = 8, right = 6, top = 8, bottom = 8 },
 })
-TMAnnounceButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+TMAnnounceButton:SetBackdropBorderColor(0, 0, 0, 0)
 TMAnnounceButton:SetScript('OnClick', function()
 	print("TM Roll Button Clicked")
 	-- roll loop
@@ -552,7 +550,7 @@ CountdownButton:SetBackdrop({
 	edgeSize = 16,
 	insets = { left = 8, right = 6, top = 8, bottom = 8 },
 })
-CountdownButton:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+CountdownButton:SetBackdropBorderColor(0, 0, 0, 0)
 CountdownButton:SetScript('OnClick', function()
 	print("Countdown Button Clicked")
 	Countdown()
@@ -567,6 +565,113 @@ function Countdown()
 		C_Timer.After(1, Countdown)
 	end
 end
+
+
+
+
+-- roll frame
+CreateFrame("Frame", "RollFrame", BossLootFrame)
+RollFrame:SetPoint("TOPRIGHT", 150, 0)
+RollFrame:SetSize(150, 500)
+RollFrame:SetBackdrop({
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+	edgeSize = 16,
+	insets = { left = 8, right = 6, top = 8, bottom = 8 },
+})
+RollFrame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+
+local RollFrameText = RollFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+RollFrameText:SetPoint("TOP", 0, -10)
+RollFrameText:SetText("Rolls:")
+
+
+
+-- table for names
+RollNames = {}
+RollScores = {}
+
+for i=1, 30 do
+
+	local name = RollFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	name:SetPoint("TOPLEFT", 12, -17-(i*15))
+	name:SetText(" ")
+	
+	RollNames[i] = name;
+
+	
+	
+	local score = RollFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	score:SetPoint("TOPRIGHT", -12, -17-(i*15))
+	score:SetText(" ")
+	
+	RollScores[i] = score
+end
+
+--event
+RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+
+RollFrame:SetScript("OnEvent", function(self, event, ...)
+	if event == "CHAT_MSG_SYSTEM" then
+
+		-- get rolls
+		local message = ...
+		local author, rollResult, rollMin, rollMax = string.match(message, "(.+) rolls (%d+) %((%d+)-(%d+)%)")
+		--print(author .. " " .. rollResult .. " " .. rollMin .. " " .. rollMin)
+		if author then
+			--Do stuff here
+			
+		
+			for i=1, 30 do
+				if RollNames[i]:GetText() == " " then
+					RollNames[i]:SetText(author)
+					RollScores[i]:SetText(rollResult)
+					--CharacterTable[TableItr]:SetText(itemName)
+					break
+				end
+			end
+				
+			
+			
+		end
+	end
+end)
+
+--- roll frame clear button
+-----------------------------------------------------------------------------------------
+RollFrameClear = CreateFrame('Button', nil, RollFrame, "UIPanelButtonTemplate")
+RollFrameClear:SetPoint('BOTTOM', RollFrame, 'BOTTOM', 0, 20)
+RollFrameClear:SetSize(55, 40)
+RollFrameClear:SetText("Clear")
+RollFrameClear:SetBackdrop({
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+	edgeSize = 16,
+	insets = { left = 8, right = 6, top = 8, bottom = 8 },
+})
+RollFrameClear:SetBackdropBorderColor(0, 0, 0, 0)
+RollFrameClear:SetScript('OnClick', function()
+	print("rlf clear button")
+	ClearRollFrame()
+end)
+
+
+-- Clears all EditBoxes
+function ClearRollFrame()
+	for i=1,30 do
+		RollNames[i]:SetText(" ")
+		RollScores[i]:SetText(" ")
+	end	
+end
+
+
+
+
+
+
+
+
+
 
 --[=====[ 
 -- code I found online to generate an item link from equipped mainhand weapon
