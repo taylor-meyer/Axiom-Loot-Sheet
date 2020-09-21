@@ -6,4 +6,3 @@
 ## SavedVariables: CharacterStrings, MSStrings, OSStrings, TMOGStrings, SheetIterator
 
 AxiomLootSheet.lua
-AxiomLootSheet.xml
