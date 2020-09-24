@@ -10,272 +10,354 @@ highestScore = 0
 currentWinner = 1
 
 ------------------------------------------------------------------------------------------
+-- AxiomLootSheet --
+--------------------
+-- Author: Lypidius <Axiom> @ US-MoonGuard
+------------------------------------------------------------------------------------------
+
+NameBoxes = {}
+MainSpecBoxes = {}
+OffSpecBoxes = {}
+TransmogBoxes = {}
+
+RowsShowing = 0
+
+print("Running AxiomLootSheet v1.3.4")
+------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------
+-- Saved Variables --
+------------------------------------------------------------------------------------------
 local SavedVariablesFrame = CreateFrame("Frame")
 SavedVariablesFrame:RegisterEvent("ADDON_LOADED")
 SavedVariablesFrame:RegisterEvent("PLAYER_LOGOUT")
-
 SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 	if event == "ADDON_LOADED" and arg1 == "AxiomLootSheet" then
 		-- Our saved variables have been loaded
-		if CharacterStrings == nil then
-			--print("Character strings are nil")
+		if NameStrings == nil then
 			-- This is the first time this addon is loaded; set SVs to default values
-			CharacterStrings = {}
-			MSStrings = {}
-			OSStrings = {}
-			TMOGStrings = {}
-			
+			NameStrings = {}
+			MainSpecCount = {}
+			OffSpecCount = {}
+			TransmogCount = {}
 			for i=1, 20 do
-				CharacterStrings[i] = "Character"
-				MSStrings[i] = "MS"
-				OSStrings[i] = "OS"
-				TMOGStrings[i] = "TM"
+				NameStrings[i] = ""
+				MainSpecCount[i] = ""
+				OffSpecCount[i] = ""
+				TransmogCount[i] = ""
 			end
 		end
 	elseif event == "PLAYER_LOGOUT" then
-		print("PLAYER_LOGOUT")
-            -- Save the values when logout/reload
-            for i=1, 20 do
-				SheetIterator = 1 -- Band-aid for saved variables
-				CharacterStrings[i] = CharacterBoxes[i]:GetText()
-				MSStrings[i] = MSBoxes[i]:GetText()
-				OSStrings[i] = OSBoxes[i]:GetText()
-				TMOGStrings[i] = TMOGBoxes[i]:GetText()
-			end
+            -- Save the values when player logout/reload
+			LoadSavedStrings()
+			SaveStrings()
 	end
 end)
 ------------------------------------------------------------------------------------------
 
 
--------------------------------------------
+
+------------------------------------------------------------------------------------------
 -- Slash Commands --
--------------------------------------------
+------------------------------------------------------------------------------------------
 SLASH_AxiomLootSheet1 = "/axiom"
-local function LootSheet(msg)
-	print("Here is your loot sheet, sir Punk.")
-	CreateMainFrame()
-end
-SlashCmdList["AxiomLootSheet"] = LootSheet
-
-
--------------------------------------------
--- Functions --
--------------------------------------------
-function CreateMainFrame(self)
-
-	if not Sheet then
-	
-		local sheety = 80
-	
-		------------------------------------------------------------------------------------------
-		-- main sheet
-		local f = CreateFrame("Frame", "Sheet", UIParent)
-		f:SetPoint("TOP", 0, -25)
-		f:SetSize(300, sheety)
-		f:SetBackdrop({
-			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-			edgeSize = 16,
-			insets = { left = 8, right = 6, top = 8, bottom = 8 },
-		})
-		f:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-		-- Movable
-		f:SetMovable(true)
-		f:SetClampedToScreen(true)
-		f:SetScript("OnMouseDown", function(self, button)
-			if button == "LeftButton" then
-				self:StartMoving()
-			end
-		end)
-		f:SetScript("OnMouseUp", f.StopMovingOrSizing)
-		-----------------------------------------------------------------------------------------
-		
-		-- add button
-		local AddRowButton = CreateFrame('Button', nil, Sheet, "UIPanelButtonTemplate")
-		AddRowButton:SetPoint('TOPLEFT', Sheet, 'TOPLEFT', 12, -25)
-		AddRowButton:SetSize(25, 25)
-		AddRowButton:SetText("+")
-		AddRowButton:SetBackdrop({
-			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-			edgeSize = 16,
-			insets = { left = 8, right = 6, top = 8, bottom = 8 },
-		})
-		AddRowButton:SetBackdropBorderColor(0, 0, 0, 0)
-		AddRowButton:SetScript('OnClick', function()
-		
-			-- TODO ADD ROW
-			if SheetIterator < 21 then
-				CharacterBoxes[SheetIterator]:Show()
-				MSBoxes[SheetIterator]:Show()
-				OSBoxes[SheetIterator]:Show()
-				TMOGBoxes[SheetIterator]:Show()
-				SheetIterator = SheetIterator + 1
-				sheety = sheety + 45
-				Sheet:SetSize(300, sheety)
-				Sheet:Show()
-			end
-		end)	
-		
-		-----------------------------------------------------------------------------------------
-		-- boxes
-		CharacterBoxes = {}
-		CharacterBoxes[1] = CreateFrame("EditBox", nil, Sheet)
-		CharacterBoxes[1]:SetPoint("TOPLEFT", Sheet, "TOPLEFT", 35, -25)
-		for i=2, 20 do
-			CharacterBoxes[i] = CreateFrame("EditBox", nil, Sheet)
-			CharacterBoxes[i]:SetPoint("TOP", CharacterBoxes[i-1], "BOTTOM", 0, -5)
-		end
-	
-	
-		for i=1, 20 do
-			CharacterBoxes[i]:SetSize(100, 40)
-			CharacterBoxes[i]:SetMultiLine(false)
-			CharacterBoxes[i]:SetAutoFocus(false)
-			CharacterBoxes[i]:SetFontObject("ChatFontNormal")
-			CharacterBoxes[i]:SetMaxLetters(12)
-			CharacterBoxes[i]:SetText(CharacterStrings[i])
-			CharacterBoxes[i]:SetTextInsets(8, 0, 0, 0)
-			CharacterBoxes[i]:SetBackdrop({
-				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-				edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-				edgeSize = 16,
-				insets = { left = 8, right = 6, top = 8, bottom = 8 },
-			})
-			CharacterBoxes[i]:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-			CharacterBoxes[i]:Hide()
-		end
-		-----------------------------------------------------------------------------------------
-		
-		-----------------------------------------------------------------------------------------
-		MSBoxes = {}
-		for i=1, 20 do
-			MSBoxes[i] = CreateFrame("EditBox", nil, Sheet)
-			MSBoxes[i]:SetPoint("LEFT", CharacterBoxes[i], "RIGHT", 5, 0)
-			MSBoxes[i]:SetSize(40, 40)
-			MSBoxes[i]:SetMultiLine(false)
-			MSBoxes[i]:SetAutoFocus(false)
-			MSBoxes[i]:SetFontObject("ChatFontNormal")
-			MSBoxes[i]:SetMaxLetters(2)
-			MSBoxes[i]:SetText(MSStrings[i])
-			MSBoxes[i]:SetTextInsets(8, 0, 0, 0)
-			MSBoxes[i]:SetBackdrop({
-				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-				edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-				edgeSize = 16,
-				insets = { left = 8, right = 6, top = 8, bottom = 8 },
-			})
-			MSBoxes[i]:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-			MSBoxes[i]:Hide()
-		end
-		-----------------------------------------------------------------------------------------
-		
-		-----------------------------------------------------------------------------------------
-		OSBoxes = {}
-		for i=1, 20 do
-			OSBoxes[i] = CreateFrame("EditBox", nil, Sheet)
-			OSBoxes[i]:SetPoint("LEFT", MSBoxes[i], "RIGHT", 5, 0)
-			-- textures
-			OSBoxes[i]:SetSize(40, 40)
-			OSBoxes[i]:SetMultiLine(false)
-			OSBoxes[i]:SetAutoFocus(false)
-			OSBoxes[i]:SetFontObject("ChatFontNormal")
-			OSBoxes[i]:SetMaxLetters(2)
-			OSBoxes[i]:SetText(OSStrings[i])
-			OSBoxes[i]:SetTextInsets(8, 0, 0, 0)
-			-- Texture
-			OSBoxes[i]:SetBackdrop({
-				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-				edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-				edgeSize = 16,
-				insets = { left = 8, right = 6, top = 8, bottom = 8 },
-			})
-			OSBoxes[i]:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-			OSBoxes[i]:Hide()
-		end
-		-----------------------------------------------------------------------------------------
-		
-		-----------------------------------------------------------------------------------------
-		TMOGBoxes = {}
-		for i=1, 20 do
-			TMOGBoxes[i] = CreateFrame("EditBox", nil, Sheet)
-			TMOGBoxes[i]:SetPoint("LEFT", OSBoxes[i], "RIGHT", 5, 0)
-			TMOGBoxes[i]:SetSize(40, 40)
-			TMOGBoxes[i]:SetMultiLine(false)
-			TMOGBoxes[i]:SetAutoFocus(false) -- dont automatically focus
-			TMOGBoxes[i]:SetFontObject("ChatFontNormal")
-			TMOGBoxes[i]:SetMaxLetters(2)
-			TMOGBoxes[i]:SetText(TMOGStrings[i])
-			TMOGBoxes[i]:SetTextInsets(8, 0, 0, 0)
-			TMOGBoxes[i]:SetBackdrop({
-				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-				edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-				edgeSize = 16,
-				insets = { left = 8, right = 6, top = 8, bottom = 8 },
-			})
-			TMOGBoxes[i]:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-			TMOGBoxes[i]:Hide()
-		end
-		-----------------------------------------------------------------------------------------
-		
-		-----------------------------------------------------------------------------------------
-		local CloseButton = CreateFrame('Button', nil, Sheet, "UIPanelButtonTemplate")
-		CloseButton:SetPoint('BOTTOM', Sheet, 'BOTTOM', -60, 20)
-		CloseButton:SetSize(75, 40)
-		-- Texture
-		CloseButton:SetText("Close")
-		CloseButton:SetBackdrop({
-			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-			edgeSize = 16,
-			insets = { left = 8, right = 6, top = 8, bottom = 8 },
-		})
-		CloseButton:SetBackdropBorderColor(0, 0, 0, 0)
-		CloseButton:SetScript('OnClick', function()
-		   Sheet:Hide()
-		end)
-		
-		local ClearButton = CreateFrame('Button', nil, Sheet, "UIPanelButtonTemplate")
-		ClearButton:SetPoint('BOTTOM', Sheet, 'BOTTOM', 60, 20)
-		ClearButton:SetSize(75, 40)
-		-- Texture
-		ClearButton:SetText("Clear")
-		ClearButton:SetBackdrop({
-			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-			edgeSize = 16,
-			insets = { left = 8, right = 6, top = 8, bottom = 8 },
-		})
-		ClearButton:SetBackdropBorderColor(0, 0, 0, 0)
-		ClearButton:SetScript('OnClick', function()
-		
-			StaticPopupDialogs["CLEAR_SHEET"] = {
-				text = "Clear loot sheet?",
-				button1 = "Yes",
-				button2 = "No",
-				OnAccept = function()
-					ClearAllBoxes(CharacterBoxes, MSBoxes, OSBoxes, TMOGBoxes)
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-			}
-			StaticPopup_Show ("CLEAR_SHEET")
-		end)
+local function ShowLootSheet(msg)
+	LoadSavedStrings()
+	if LootSheet:IsVisible() then
+		LootSheet:Hide()
+	else
+		print("Here is your loot sheet, sir Punk.")
+		LootSheet:Show()
 	end
-	Sheet:Show()
+end
+SlashCmdList["AxiomLootSheet"] = ShowLootSheet
+------------------------------------------------------------------------------------------
+
+
+
+function CreateLootSheet()
+	local f = CreateFrame("Frame", "LootSheet", UIParent)
+			f:SetPoint("TOP", 0, -25)
+			f:SetSize(270, 70)
+			f:SetBackdrop({
+				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+				edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+				edgeSize = 16,
+				insets = { left = 8, right = 6, top = 8, bottom = 8 },
+				})
+			f:SetBackdropBorderColor(1, 0, 0, .5)
+			f:SetMovable(true)
+			f:SetClampedToScreen(true)
+			f:SetScript("OnMouseDown", function(self, button)
+				if button == "LeftButton" then
+					self:StartMoving()
+				end
+			end)
+			f:SetScript("OnMouseUp", f.StopMovingOrSizing)
+			
+			CreateNewRowButton()
+			CreateRemoveRowButton()
+			CreateNameBoxes()
+			CreateMainSpecBoxes()
+			CreateOffSpecBoxes()
+			CreateTransmogBoxes()
+			CreateCloseButton()
+			CreateClearButton()
+			
+			local title_name = LootSheet:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+			title_name:SetPoint("TOP", NameBoxes[1], "TOP", 0, 10)
+			title_name:SetText("Name")
+			
+			local title_mainspec = LootSheet:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+			title_mainspec:SetPoint("TOP", MainSpecBoxes[1], "TOP", 0, 10)
+			title_mainspec:SetText("MS")
+			
+			local title_offspec = LootSheet:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+			title_offspec:SetPoint("TOP", OffSpecBoxes[1], "TOP", 0, 10)
+			title_offspec:SetText("OS")
+	
+			local title_tmog = LootSheet:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+			title_tmog:SetPoint("TOP", TransmogBoxes[1], "TOP", 0, 10)
+			title_tmog:SetText("TMOG")
+			
+			f:Hide()
 end
 
--- Clears all EditBoxes
-function ClearAllBoxes(CharacterBoxes, MSBoxes, OSBoxes, TMOGBoxes)
+function CreateNameBoxes()
 	for i=1, 20 do
-		CharacterBoxes[i]:SetText("")
-		MSBoxes[i]:SetText("")
-		OSBoxes[i]:SetText("")
-		TMOGBoxes[i]:SetText("")
-	
+		if i == 1 then
+			NameBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			NameBoxes[i]:SetPoint("TOPLEFT", LootSheet, "TOPLEFT", 15, -25)
+		else
+			NameBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			NameBoxes[i]:SetPoint("TOP", NameBoxes[i-1], "BOTTOM", 0, 0)
+		end
+		
+		NameBoxes[i]:SetSize(100, 40)
+		NameBoxes[i]:SetMultiLine(false)
+		NameBoxes[i]:SetAutoFocus(false)
+		NameBoxes[i]:SetFontObject("ChatFontNormal")
+		NameBoxes[i]:SetMaxLetters(12)
+		NameBoxes[i]:SetTextInsets(12, 0, 0, 0)
+		NameBoxes[i]:SetBackdrop({
+			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+			edgeSize = 16,
+			insets = { left = 8, right = 6, top = 8, bottom = 8 },
+		})
+		NameBoxes[i]:SetBackdropBorderColor(1, 0, 0, 0)
+		NameBoxes[i]:Hide()
+		
+		NameBoxes[i]:SetScript("OnTabPressed", function(self)
+			-- tab over
+			MainSpecBoxes[i]:SetFocus()
+		end)
 	end
 end
+
+function CreateMainSpecBoxes()
+	for i=1, 20 do
+		if i == 1 then
+			MainSpecBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			MainSpecBoxes[i]:SetPoint("LEFT", NameBoxes[i], "RIGHT", 5, 0)
+		else
+			MainSpecBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			MainSpecBoxes[i]:SetPoint("TOP", MainSpecBoxes[i-1], "BOTTOM", 0, 0)
+		end
+		
+		MainSpecBoxes[i]:SetSize(40, 40)
+		MainSpecBoxes[i]:SetTextInsets(20, 0, 0, 0)
+		MainSpecBoxes[i]:SetMultiLine(false)
+		MainSpecBoxes[i]:SetAutoFocus(false)
+		MainSpecBoxes[i]:SetFontObject("ChatFontNormal")
+		MainSpecBoxes[i]:SetMaxLetters(2)
+		MainSpecBoxes[i]:SetTextInsets(14, 0, 0, 0)
+		MainSpecBoxes[i]:SetBackdrop({
+			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+			edgeSize = 16,
+			insets = { left = 8, right = 6, top = 8, bottom = 8 },
+		})
+		MainSpecBoxes[i]:SetBackdropBorderColor(1, 0, 0, 0)
+		MainSpecBoxes[i]:Hide()
+		
+		MainSpecBoxes[i]:SetScript("OnTabPressed", function(self)
+			-- tab over
+			OffSpecBoxes[i]:SetFocus()
+		end)
+	end
+end
+
+function CreateOffSpecBoxes()
+	for i=1, 20 do
+		if i == 1 then
+			OffSpecBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			OffSpecBoxes[i]:SetPoint("LEFT", MainSpecBoxes[i], "RIGHT", 5, 0)
+		else
+			OffSpecBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			OffSpecBoxes[i]:SetPoint("TOP", OffSpecBoxes[i-1], "BOTTOM", 0, 0)
+		end
+		
+		OffSpecBoxes[i]:SetSize(40, 40)
+		OffSpecBoxes[i]:SetMultiLine(false)
+		OffSpecBoxes[i]:SetAutoFocus(false)
+		OffSpecBoxes[i]:SetFontObject("ChatFontNormal")
+		OffSpecBoxes[i]:SetMaxLetters(2)
+		OffSpecBoxes[i]:SetTextInsets(14, 0, 0, 0)
+		OffSpecBoxes[i]:SetBackdrop({
+			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+			edgeSize = 16,
+			insets = { left = 8, right = 6, top = 8, bottom = 8 },
+		})
+		OffSpecBoxes[i]:SetBackdropBorderColor(1, 0, 0, 0)
+		OffSpecBoxes[i]:Hide()
+		
+		OffSpecBoxes[i]:SetScript("OnTabPressed", function(self)
+			-- tab over
+			TransmogBoxes[i]:SetFocus()
+		end)
+	end
+end
+
+function CreateTransmogBoxes()
+	for i=1, 20 do
+		if i == 1 then
+			TransmogBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			TransmogBoxes[i]:SetPoint("LEFT", OffSpecBoxes[i], "RIGHT", 5, 0)
+		else
+			TransmogBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			TransmogBoxes[i]:SetPoint("TOP", TransmogBoxes[i-1], "BOTTOM", 0, 0)
+		end
+		
+		TransmogBoxes[i]:SetSize(40, 40)
+		TransmogBoxes[i]:SetMultiLine(false)
+		TransmogBoxes[i]:SetAutoFocus(false)
+		TransmogBoxes[i]:SetFontObject("ChatFontNormal")
+		TransmogBoxes[i]:SetMaxLetters(2)
+		TransmogBoxes[i]:SetTextInsets(14, 0, 0, 0)
+		TransmogBoxes[i]:SetBackdrop({
+			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+			edgeSize = 16,
+			insets = { left = 8, right = 6, top = 8, bottom = 8 },
+		})
+		TransmogBoxes[i]:SetBackdropBorderColor(1, 0, 0, 0)
+		TransmogBoxes[i]:Hide()
+		
+		if i < 20 then
+			TransmogBoxes[i]:SetScript("OnTabPressed", function(self)
+				-- tab over
+				NameBoxes[i+1]:SetFocus()
+			end)
+		end
+	end
+end
+
+function CreateNewRowButton()
+	local button = CreateFrame("Button", "AddRowButton", LootSheet, "UIPanelButtonTemplate")
+			button:SetPoint("RIGHT", LootSheet, "TOPLEFT", 5, -17)
+			button:SetSize(25, 25)
+			button:SetText("+")
+			button:SetScript('OnClick', function()
+				ShowRow(RowsShowing+1)
+			end)
+end
+
+function CreateRemoveRowButton()
+	local button = CreateFrame("Button", "RemoveRowButton", LootSheet, "UIPanelButtonTemplate")
+			button:SetPoint("TOP", AddRowButton, "BOTTOM", 0, 0)
+			button:SetSize(25, 25)
+			button:SetText("-")
+			button:SetScript('OnClick', function()
+				HideRow(RowsShowing)
+			end)
+end
+
+function ShowRow(i)
+	if i < 21 then
+		LootSheet:SetHeight(LootSheet:GetHeight() + 40);
+		NameBoxes[i]:Show()
+		MainSpecBoxes[i]:Show()
+		OffSpecBoxes[i]:Show()
+		TransmogBoxes[i]:Show()
+		RowsShowing = RowsShowing + 1
+	end
+end
+
+function HideRow(i)
+	if i > 0 then
+		LootSheet:SetHeight(LootSheet:GetHeight() - 40);
+		NameBoxes[i]:Hide()
+		MainSpecBoxes[i]:Hide()
+		OffSpecBoxes[i]:Hide()
+		TransmogBoxes[i]:Hide()
+		RowsShowing = RowsShowing - 1
+	end
+end
+
+function CreateCloseButton()
+	local button = CreateFrame("Button", "CloseButton", LootSheet, "UIPanelButtonTemplate")
+	button:SetPoint("BOTTOM", LootSheet, "BOTTOM", -70, 10)
+	button:SetSize(50, 30)
+	button:SetText("Close")
+	button:SetScript("OnClick", function()
+		SaveStrings()
+		LootSheet:Hide()
+	end)
+end
+
+function CreateClearButton()
+	local button = CreateFrame("Button", "ClearButton", LootSheet, "UIPanelButtonTemplate")
+	button:SetPoint("LEFT", CloseButton, "RIGHT", 75, 0)
+	button:SetSize(50, 30)
+	button:SetText("Clear")
+	button:SetScript("OnClick", function()
+		StaticPopupDialogs["CLEAR_SHEET"] = {
+			text = "Wipe loot sheet (all data will enter The Maw)?",
+			button1 = "Yes",
+			button2 = "No",
+			OnAccept = function()
+				ClearAllRows()
+			end,
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+		}
+		StaticPopup_Show ("CLEAR_SHEET")
+	end)
+end
+
+function SaveStrings()
+	for i=1, 20 do
+		NameStrings[i] = NameBoxes[i]:GetText()
+		MainSpecCount[i] = MainSpecBoxes[i]:GetText()
+		OffSpecCount[i] = OffSpecBoxes[i]:GetText()
+		TransmogCount[i] = TransmogBoxes[i]:GetText()
+	end
+end
+
+function LoadSavedStrings()
+	for i=1,20 do
+		NameBoxes[i]:SetText(NameStrings[i])
+		MainSpecBoxes[i]:SetText(MainSpecCount[i])
+		OffSpecBoxes[i]:SetText(OffSpecCount[i])
+		TransmogBoxes[i]:SetText(TransmogCount[i])
+	end
+end
+
+function ClearAllRows()
+	for i=1,20 do
+		NameBoxes[i]:SetText("")
+		MainSpecBoxes[i]:SetText("")
+		OffSpecBoxes[i]:SetText("")
+		TransmogBoxes[i]:SetText("")
+	end
+end
+
+CreateLootSheet()
 
 
 
