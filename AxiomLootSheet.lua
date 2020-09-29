@@ -1,14 +1,3 @@
-LinkTable = {}
-TextTable = {}
-Items = {}
-CharacterTable = {}
-CheckButtons = {}
-ofs = -50
-SheetIterator = 1 -- This is currently a saved variable and it doesn't need to be, future fix
-countTimer = 5
-highestScore = 0
-currentWinner = 1
-
 ------------------------------------------------------------------------------------------
 -- AxiomLootSheet --
 --------------------
@@ -22,10 +11,19 @@ TransmogBoxes = {}
 
 RowsShowing = 0
 
-print("Running AxiomLootSheet v1.3.4")
+LootRows = {}
+LootRowsUsed = 0
+
+LootNames = {}
+LootItemFrames = {}
+LootItemStrings = {}
+LootCheckButtons = {}
+LootItemLinks = {}
+
+CountdownTimer = 5
+
+print("Running AxiomLootSheet v1.4.0")
 ------------------------------------------------------------------------------------------
-
-
 
 ------------------------------------------------------------------------------------------
 -- Saved Variables --
@@ -57,25 +55,29 @@ SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 end)
 ------------------------------------------------------------------------------------------
 
-
-
 ------------------------------------------------------------------------------------------
 -- Slash Commands --
 ------------------------------------------------------------------------------------------
-SLASH_AxiomLootSheet1 = "/axiom"
-local function ShowLootSheet(msg)
-	LoadSavedStrings()
-	if LootSheet:IsVisible() then
-		LootSheet:Hide()
+SLASH_SPREADSHEET1 = "/axiom"
+SlashCmdList["SPREADSHEET"] = function(msg, editBox)
+	if msg == "loots" then
+		print("called loots")
+		if LootResults:IsVisible() then
+			LootResults:Hide()
+		else
+			LootResults:Show()
+		end
 	else
-		print("Here is your loot sheet, sir Punk.")
-		LootSheet:Show()
+		LoadSavedStrings()
+		if LootSheet:IsVisible() then
+			LootSheet:Hide()
+		else
+			print("Here is your loot sheet, sir Punk.")
+			LootSheet:Show()
+		end
 	end
 end
-SlashCmdList["AxiomLootSheet"] = ShowLootSheet
 ------------------------------------------------------------------------------------------
-
-
 
 function CreateLootSheet()
 	local f = CreateFrame("Frame", "LootSheet", UIParent)
@@ -357,435 +359,288 @@ function ClearAllRows()
 	end
 end
 
-CreateLootSheet()
+------------------------------------------------------------------------------------------
 
-
-
------------------------------------------------------------------------------------------
--- LOOT FRAME --
------------------------------------------------------------------------------------------
-local blf = CreateFrame("Frame", "BossLootFrame", UIParent)
-
-blf:SetPoint("CENTER")
-blf:SetSize(350, 500)
-blf:SetBackdrop({
-	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-	edgeSize = 16,
-	insets = { left = 8, right = 6, top = 8, bottom = 8 },
-})
-
-blf:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-blf:SetMovable(true)
-blf:SetClampedToScreen(true)
---blf:SetHyperlinksEnabled()
-
-
-blf:SetScript("OnMouseDown", function(self, button)
-	if button == "LeftButton" then
-		self:StartMoving()
-	end
-end)
-blf:SetScript("OnMouseUp", BossLootFrame.StopMovingOrSizing)
-
-blf:RegisterEvent("BOSS_KILL")
-blf:RegisterEvent("ENCOUNTER_LOOT_RECEIVED")
-blf:RegisterEvent("PLAYER_LOGIN")
-
-local BossLootFrameText = BossLootFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-BossLootFrameText:SetPoint("TOP", 0, -25)
-BossLootFrameText:SetText("Loot:")
-
-blf:Hide()
------------------------------------------------------------------------------------------
-
-
-for i=1, 10 do
-
-	local CharacterFontString = BossLootFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	CharacterFontString:SetPoint("TOPLEFT", 15, ofs)
-	CharacterFontString:SetText(" ")
-	CharacterTable[i] = CharacterFontString
-
-	local ItemLinkFrame = CreateFrame("Frame", "LinkFrame" .. i, BossLootFrame)
-	ItemLinkFrame:SetPoint("TOP", 0, ofs+10)
-	ItemLinkFrame:SetSize(75,30)
-	--ItemLinkFrame:EnableMouse(true)
+function CreateLootResultsFrame()
+	local f = CreateFrame("Frame", "LootResults", UIParent)
+	f:SetPoint("CENTER")
+	f:SetSize(450, 875)
+	f:SetBackdrop({
+		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+		edgeSize = 16,
+		insets = { left = 8, right = 6, top = 8, bottom = 8 },
+	})
+	f:SetBackdropBorderColor(1, 0, 0, .5)
 	
-	local ItemLinkText = ItemLinkFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	ItemLinkText:SetPoint("CENTER")
+	-- Close button
+	local button = CreateFrame("Button", "LootResultsCloseButton", f)
+	button:SetHeight(25)
+	button:SetWidth(25)
+	button:SetPoint("TOPRIGHT", -10, -10)
+	button:SetNormalTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Up")
+	button:SetPushedTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Down")
+	button:SetHighlightTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Highlight", "ADD")
+	button:SetScript("OnClick", function(self) self:GetParent():Hide() end)
 	
-	LinkTable[i] = ItemLinkFrame
-	TextTable[i] = ItemLinkText
-
-	local CheckButton = CreateFrame("CheckButton", "AnnounceCheckButton" .. i, BossLootFrame, "ChatConfigCheckButtonTemplate")
-	CheckButton:SetPoint("TOPRIGHT", -15, ofs + 7)
-	CheckButton.tooltip = "Up for roll"
-	CheckButton:SetChecked(false)
-	CheckButton:HookScript("OnClick", function()
-		-- do stuff
+	-- Title text
+	local text = LootResults:CreateFontString(LootResultsTitleText, "OVERLAY", "GameFontNormal")
+	text:SetPoint("TOP", 0, -25)
+	text:SetText("ENCOUNTER LOOT!")
+	
+	-- Moveable
+	f:SetMovable(true)
+	f:SetClampedToScreen(true)
+	f:SetScript("OnMouseDown", function(self, button)
+		if button == "LeftButton" then
+			self:StartMoving()
+		end
 	end)
+	f:SetScript("OnMouseUp", LootResults.StopMovingOrSizing)
 	
-	CheckButton:Hide()
-	CheckButtons[i] = CheckButton
-
-	ofs = ofs - 50
-end
-
-BossLootFrame:SetScript("OnEvent", function(self, event, ...)
-
-	if event == "BOSS_KILL" then
-		BossLootFrame:Show()
-
-	elseif event == "ENCOUNTER_LOOT_RECEIVED" then
+	-- Events
+	f:RegisterEvent("BOSS_KILL")
+	f:RegisterEvent("ENCOUNTER_LOOT_RECEIVED")
 	
-		local encounterID, itemID, itemLink, quantity, itemName, fileName = ...
-		--print(encounterID .. " " .. itemID .. " " .. itemLink .. " " .. quantity .. " " .. itemName .. " " .. fileName)
-		
-		-- Character name
-		for i=1, 10 do
-			if CharacterTable[i]:GetText() == " " then
-				TableItr = i
-				CharacterTable[i]:SetText(itemName)
-				--CharacterTable[TableItr]:SetText(itemName)
-				break
+	f:SetScript("OnEvent", function(self, event, ...)
+		if event == "BOSS_KILL" then
+			ClearLootRows()
+			f:Show()
+		elseif event == "ENCOUNTER_LOOT_RECEIVED" then
+			local encounterID, itemID, itemLink, quantity, itemName, fileName = ...
+			local i = LootRowsUsed + 1
+			LootRowsUsed = LootRowsUsed + 1
+			--print("i: " .. i)
+			--print("LRU: " .. LootRowsUsed)
+			LootItemLinks[i] = itemLink
+			if i < 25 then
+				s = strsub(itemName, 1, 12)
+				print("Player that got loot: " .. itemName .. " SubStr: " .. s)
+				LootNames[i]:SetText(s)
+				LootItemStrings[i]:SetText(itemLink)
+				LootItemFrames[i]:HookScript("OnEnter", function()
+					if (itemLink) then
+						GameTooltip:SetOwner(f, "ANCHOR_TOP")
+						GameTooltip:SetHyperlink(itemLink)
+						GameTooltip:Show()
+					end
+				end)
+				LootItemFrames[i]:HookScript("OnLeave", function()
+					GameTooltip:Hide()
+				end)
 			end
 		end
-
-		-- Set Text
-		TextTable[TableItr]:SetText(itemLink)
-			
-		-- Mouse over script
-		LinkTable[TableItr]:HookScript("OnEnter", function()
-		  if (itemLink) then
-			GameTooltip:SetOwner(LinkTable[TableItr], "ANCHOR_TOP")
-			GameTooltip:SetHyperlink(itemLink)
-			GameTooltip:Show()
-		  end
-		end)
-		 
-		LinkTable[TableItr]:HookScript("OnLeave", function()
-		  GameTooltip:Hide()
-		end)
-		
-		CheckButtons[TableItr]:Show()
-		
-		Items[TableItr] = itemLink
-		
-	end	
-end)
-
-
--- close button
------------------------------------------------------------------------------------------
-CloseButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
-CloseButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', -50, 20)
-CloseButton:SetSize(75, 40)
--- Texture
-CloseButton:SetText("Close")
-CloseButton:SetBackdrop({
-	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-	edgeSize = 16,
-	insets = { left = 8, right = 6, top = 8, bottom = 8 },
-})
-CloseButton:SetBackdropBorderColor(0, 0, 0, 0)
-CloseButton:SetScript('OnClick', function()
-
-	StaticPopupDialogs["CLOSE_WINDOW"] = {
-		text = "Close loot sheet? (Everything you see will enter the maw)",
-		button1 = "Yes",
-		button2 = "No",
-		OnAccept = function()
-			CloseLootSheet()
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = true,
-	}
-	StaticPopup_Show ("CLOSE_WINDOW")
-end)
-
--- Clears loot sheet
-function CloseLootSheet()
-	BossLootFrame:Hide()
-	ofs = -50
-	for i=1, 10 do
-		CharacterTable[i]:SetText(" ")
-		TextTable[i]:SetText(" ")
-		CheckButtons[i]:SetChecked(false)
-		CheckButtons[i]:Hide()
-		Items = {}
-	end	
-	ClearRollFrame()
+	end)
+	
+	CreateRows()
+	CreateLootAnnounceButton()
+	CreateRollMainSpecButton()
+	CreateRollOffSpecButton()
+	CreateRollTransmogSpecButton()
+	CreateCountdownButton()
+	
+	f:Hide()
 end
 
+function CreateRows()
 
---- raid warning button
------------------------------------------------------------------------------------------
-LootAnnounceButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
-LootAnnounceButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', 50, 20)
-LootAnnounceButton:SetSize(85, 40)
-LootAnnounceButton:SetText("Announce")
-LootAnnounceButton:SetBackdrop({
-	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
-	edgeSize = 16,
-	insets = { left = 8, right = 6, top = 8, bottom = 8 },
-})
-LootAnnounceButton:SetBackdropBorderColor(0, 0, 0, 0)
-LootAnnounceButton:SetScript('OnClick', function()
-   -- announce loop
-   for i=1, 10 do
-		-- add item to msg if checkbox is checked
-		if CheckButtons[i]:GetChecked() == true then
-			SendChatMessage(Items[i], "SAY", nil, "channel");
-		end
-   end
-end)
+	--local mainHandLink = GetInventoryItemLink("player",GetInventorySlotInfo("MainHandSlot"))
+	--local _, itemLink, _, _, _, _, itemType = GetItemInfo(mainHandLink)
 
-
---- ms roll button
------------------------------------------------------------------------------------------
-MSAnnounceButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
-MSAnnounceButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', -110, 70)
-MSAnnounceButton:SetSize(85, 40)
-MSAnnounceButton:SetText("ROLL MS")
-MSAnnounceButton:SetBackdrop({
-	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
-	edgeSize = 16,
-	insets = { left = 8, right = 6, top = 8, bottom = 8 },
-})
-MSAnnounceButton:SetBackdropBorderColor(0, 0, 0, 0)
-MSAnnounceButton:SetScript('OnClick', function()
-	print("MS Roll Button Clicked")
-   -- roll loop
-	for i=1, 10 do
-		-- add item to msg if checkbox is checked
-		if CheckButtons[i]:GetChecked() == true then
-			SendChatMessage("ROLL FOR MS: " .. Items[i], "SAY", nil, "channel");
-			break;
-		end
-	end
-end)
-
-
---- os roll button
------------------------------------------------------------------------------------------
-OSAnnounceButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
-OSAnnounceButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', -20, 70)
-OSAnnounceButton:SetSize(85, 40)
-OSAnnounceButton:SetText("ROLL OS")
-OSAnnounceButton:SetBackdrop({
-	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
-	edgeSize = 16,
-	insets = { left = 8, right = 6, top = 8, bottom = 8 },
-})
-OSAnnounceButton:SetBackdropBorderColor(0, 0, 0, 0)
-OSAnnounceButton:SetScript('OnClick', function()
-	print("OS Roll Button Clicked")
-	-- roll loop
-	for i=1, 10 do
-		-- add item to msg if checkbox is checked
-		if CheckButtons[i]:GetChecked() == true then
-			SendChatMessage("ROLL FOR OS: " .. Items[i], "SAY", nil, "channel");
-			break;
-		end
-	end
-end)
-
-
---- tmog roll button
------------------------------------------------------------------------------------------
-TMAnnounceButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
-TMAnnounceButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', 70, 70)
-TMAnnounceButton:SetSize(85, 40)
-TMAnnounceButton:SetText("ROLL TM")
-TMAnnounceButton:SetBackdrop({
-	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
-	edgeSize = 16,
-	insets = { left = 8, right = 6, top = 8, bottom = 8 },
-})
-TMAnnounceButton:SetBackdropBorderColor(0, 0, 0, 0)
-TMAnnounceButton:SetScript('OnClick', function()
-	print("TM Roll Button Clicked")
-	-- roll loop
-	for i=1, 10 do
-		-- add item to msg if checkbox is checked
-		if CheckButtons[i]:GetChecked() == true then
-			SendChatMessage("ROLL FOR TMOG: " .. Items[i], "SAY", nil, "channel");
-			break;
-		end
-	end
-end)
-
---- 5 seconds countdown button
------------------------------------------------------------------------------------------
-CountdownButton = CreateFrame('Button', nil, BossLootFrame, "UIPanelButtonTemplate")
-CountdownButton:SetPoint('BOTTOM', BossLootFrame, 'BOTTOM', 140, 70)
-CountdownButton:SetSize(35, 40)
-CountdownButton:SetText("5")
-CountdownButton:SetBackdrop({
-	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
-	edgeSize = 16,
-	insets = { left = 8, right = 6, top = 8, bottom = 8 },
-})
-CountdownButton:SetBackdropBorderColor(0, 0, 0, 0)
-CountdownButton:SetScript('OnClick', function()
-	print("Countdown Button Clicked")
-	Countdown()
-	C_Timer.After(6, function() countTimer = 5 end)
+	for i=1,25 do
 	
-end)
+		local row = CreateFrame("Frame", "Row " .. i, LootResults)
+		row:SetPoint("TOPLEFT", 10, -5 - (30 * i))
+		row:SetSize(415, 40)
+		row:SetBackdrop({
+			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+			edgeSize = 16,
+			insets = { left = 8, right = 6, top = 8, bottom = 8 },
+		})
+		row:SetBackdropBorderColor(1, 0, 0, 0)
+		-----------------------------------------------------------------------------------------
+		
+		local name = row:CreateFontString("NameFontString" .. i, "OVERLAY", "GameFontNormal")
+		name:SetPoint("LEFT", 10, 0)
+		--name:SetText()
+		-----------------------------------------------------------------------------------------
+		
+		-- Item frame size is big enough to encompass: "Merciless Gladiator's Crossbow of the Phoenix"
+		--	(the longest item name in the game)
+		local f = CreateFrame("Frame", "ItemFrame" .. i, row)
+		f:SetPoint("LEFT", name, "RIGHT", 0, 0)
+		f:SetSize(300,40)
+		--[[
+		f:SetBackdrop({
+			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+			edgeSize = 16,
+			insets = { left = 8, right = 6, top = 8, bottom = 8 },
+		})
+		f:SetBackdropBorderColor(1, .6, 0, 1)
+		--]]
+		-----------------------------------------------------------------------------------------
+		
+		local s = f:CreateFontString("ItemString" .. i, "OVERLAY", "GameFontNormal")
+		s:SetPoint("LEFT", 10, 0)
+		--s:SetText(itemLink)
+		--s:SetText("[Merciless Gladiator's Crossbow of the Phoenix]")
+		
+		-- Mouse over script
+		-- TODO: change this such that mouse over only works on the text itself,
+		--			not the entire background frame "ItemFrame" above
+		--[[
+		f:HookScript("OnEnter", function()
+			if (itemLink) then
+				GameTooltip:SetOwner(f, "ANCHOR_TOP")
+				GameTooltip:SetHyperlink(itemLink)
+				GameTooltip:Show()
+			end
+		end)
+		 
+		f:HookScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
+		--]]
+		-----------------------------------------------------------------------------------------
+		
+		
+		local c = CreateFrame("CheckButton", "LootCheckButton"  .. i, row, "ChatConfigCheckButtonTemplate")
+		c:SetPoint("RIGHT", 17, 0)
+		c.tooltip = "Up for roll"
+		c:SetChecked(false)
+		c:HookScript("OnClick", function()
+			-- do stuff
+			--print("CheckButton clicked")
+		end)
+		
+		LootNames[i] = name
+		LootItemFrames[i] = f
+		LootItemStrings[i] = s
+		LootCheckButtons[i] = c
+		LootRows[i] = row
+	end
+end
+
+function CreateLootAnnounceButton()
+	local button = CreateFrame("Button", "AnnounceButton", LootResults, "UIPanelButtonTemplate")
+	button:SetPoint("BOTTOM", 0, 20)
+	button:SetSize(80, 40)
+	button:SetText("Announce")
+	button:SetScript("OnClick", function()
+		--print("Loot announce clicked")
+		-- announce loop
+	   for i=1,25 do
+			if LootCheckButtons[i]:GetChecked() == true then
+				SendChatMessage(LootItemLinks[i], "RAID_WARNING", nil, "channel")
+			end
+	   end
+	end)
+end
+
+function CreateRollMainSpecButton()
+	local button = CreateFrame("Button", "MainSpecRollButton", LootResults, "UIPanelButtonTemplate")
+	button:SetPoint("BOTTOMLEFT", AnnounceButton, "TOPLEFT", 0, 0)
+	button:SetSize(35, 25)
+	button:SetText("MS")
+	button:SetScript("OnClick", function()
+		--print("Roll MS clicked")
+		for i=1,25 do
+			if LootCheckButtons[i]:GetChecked() == true then
+				SendChatMessage("ROLL FOR MS: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
+				break;
+			end
+		end
+	end)
+end
+
+function CreateRollOffSpecButton()
+	local button = CreateFrame("Button", "OffSpecRollButton", LootResults, "UIPanelButtonTemplate")
+	button:SetPoint("LEFT", MainSpecRollButton, "RIGHT", 0, 0)
+	button:SetSize(35, 25)
+	button:SetText("OS")
+	button:SetScript("OnClick", function()
+		--print("Roll OS clicked")
+		for i=1,25 do
+			if LootCheckButtons[i]:GetChecked() == true then
+				SendChatMessage("ROLL FOR OS: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
+				break;
+			end
+		end
+	end)
+end
+
+function CreateRollTransmogSpecButton()
+
+	local button = CreateFrame("Button", "TransmogRollButton", LootResults, "UIPanelButtonTemplate")
+	button:SetPoint("LEFT", OffSpecRollButton, "RIGHT", 0, 0)
+	button:SetSize(35, 25)
+	button:SetText("TM")
+	button:SetScript("OnClick", function()
+		--print("Roll TM clicked")
+		for i=1,25 do
+			if LootCheckButtons[i]:GetChecked() == true then
+				SendChatMessage("ROLL FOR TMOG: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
+				break;
+			end
+		end
+	end)
+end
+
+function CreateCountdownButton()
+	local button = CreateFrame("Button", "CountdownButton", LootResults, "UIPanelButtonTemplate")
+	button:SetPoint("LEFT", AnnounceButton, "RIGHT", 0, 0)
+	button:SetPoint("TOPRIGHT", TransmogRollButton, "BOTTOMRIGHT", 0, 0)
+	button:SetSize(35, 40)
+	button:SetText("5")
+	button:SetScript("OnClick", function()
+		inInstance, instanceType = IsInInstance()
+		--print(inInstance)
+		if inInstance == false then
+			print("Not in an instance!")
+		elseif instanceType ~= "raid" then
+			print("Not in a raid!")
+		else
+			Countdown()
+			C_Timer.After(6, function() CountdownTimer = 5 end)
+		end
+	end)
+end
 
 function Countdown()
-	SendChatMessage(countTimer, "SAY", nil, "channel");
-	if countTimer ~=1 then
-		countTimer = countTimer - 1
+	SendChatMessage(CountdownTimer, "RAID_WARNING", nil, "channel");
+	if CountdownTimer ~=1 then
+		CountdownTimer = CountdownTimer - 1
 		C_Timer.After(1, Countdown)
 	end
 end
 
-
-
-
--- roll frame
-CreateFrame("Frame", "RollFrame", BossLootFrame)
-RollFrame:SetPoint("TOPRIGHT", 150, 0)
-RollFrame:SetSize(150, 500)
-RollFrame:SetBackdrop({
-	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-	edgeSize = 16,
-	insets = { left = 8, right = 6, top = 8, bottom = 8 },
-})
-RollFrame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-
-local RollFrameText = RollFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-RollFrameText:SetPoint("TOP", 0, -10)
-RollFrameText:SetText("Rolls:")
-
-
-
--- table for names
-RollNames = {}
-RollScores = {}
-
-for i=1, 30 do
-
-	local name = RollFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	name:SetPoint("TOPLEFT", 12, -17-(i*15))
-	name:SetText(" ")
-	
-	RollNames[i] = name;
-
-	
-	
-	local score = RollFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	score:SetPoint("TOPRIGHT", -12, -17-(i*15))
-	score:SetText(" ")
-	
-	RollScores[i] = score
-	
-	RollNames[i]:SetTextColor(1, 1, 1, 1)
-	RollScores[i]:SetTextColor(1, 1, 1, 1)
-end
-
---event
-RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
-
-RollFrame:SetScript("OnEvent", function(self, event, ...)
-	if event == "CHAT_MSG_SYSTEM" then
-
-		-- get rolls
-		local message = ...
-		local author, rollResult, rollMin, rollMax = string.match(message, "(.+) rolls (%d+) %((%d+)-(%d+)%)")
-		--print(author .. " " .. rollResult .. " " .. rollMin .. " " .. rollMin)
-		if author then
-			--Do stuff here
-			
-		
-			for i=1, 30 do
-				if RollNames[i]:GetText() == " " then
-					RollNames[i]:SetText(author)
-					RollScores[i]:SetText(rollResult)
-					--CharacterTable[TableItr]:SetText(itemName)
-					
-					if tonumber(rollResult) > highestScore then
-						highestScore = tonumber(rollResult) -- set winner to green
-						RollNames[i]:SetTextColor(0, 1, 0, 1)
-						RollScores[i]:SetTextColor(0, 1, 0, 1)
-						currentWinner = i -- new winner
-						
-						for k=1,i-1 do
-							RollNames[k]:SetTextColor(1, 1, 1, 1)
-							RollScores[k]:SetTextColor(1, 1, 1, 1)
-						end
-					
-				
-					
-					
-					elseif tonumber(rollResult) == highestScore then
-						RollNames[i]:SetTextColor(0, 0, 1, 1)
-						RollScores[i]:SetTextColor(0, 0, 1, 1)
-					end
-					
-					break
-				end
-			end
-		end
+function ClearLootRows()
+	LootRowsUsed = 0
+	for i=1,25 do
+		LootNames[i]:SetText("")
+		LootItemStrings[i]:SetText("")
+		--TODO: uncheck check button
 	end
-end)
-
---- roll frame clear button
------------------------------------------------------------------------------------------
-RollFrameClear = CreateFrame('Button', nil, RollFrame, "UIPanelButtonTemplate")
-RollFrameClear:SetPoint('BOTTOM', RollFrame, 'BOTTOM', 0, 20)
-RollFrameClear:SetSize(55, 40)
-RollFrameClear:SetText("Clear")
-RollFrameClear:SetBackdrop({
-	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-	edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
-	edgeSize = 16,
-	insets = { left = 8, right = 6, top = 8, bottom = 8 },
-})
-RollFrameClear:SetBackdropBorderColor(0, 0, 0, 0)
-RollFrameClear:SetScript('OnClick', function()
-	print("rlf clear button")
-	ClearRollFrame()
-end)
-
-
--- Clears all EditBoxes
-function ClearRollFrame()
-	highestScore = 0
-	currentWinner = 1
-	for i=1,30 do
-		RollNames[i]:SetText(" ")
-		RollScores[i]:SetText(" ")
-	end	
 end
 
+function AnnounceLoot()
 
+end
 
+------------------------------------------------------------------------------------------
 
-
-
-
-
-
+CreateLootSheet()
+CreateLootResultsFrame()
 
 --[=====[ 
--- code I found online to generate an item link from equipped mainhand weapon
-local mainHandLink = GetInventoryItemLink("player",GetInventorySlotInfo("MainHandSlot"))
-local _, itemLink, _, _, _, _, itemType = GetItemInfo(mainHandLink)
+-- Code I found online to generate an itemLink from the equipped mainhand weapon
+	local mainHandLink = GetInventoryItemLink("player",GetInventorySlotInfo("MainHandSlot"))
+	local _, itemLink, _, _, _, _, itemType = GetItemInfo(mainHandLink)
 -- send it to chat window to test it works and it does, you can click it in the window and see the item
-DEFAULT_CHAT_FRAME:AddMessage(itemLink)
+	DEFAULT_CHAT_FRAME:AddMessage(itemLink)
 --]=====]
 
--- table size
---print(     "table size: " ..         (table.getn(ItemLinkTable))    )
+-- How to get size of a table if I need it
+--print("Table size: " .. (table.getn(ItemLinkTable)))
