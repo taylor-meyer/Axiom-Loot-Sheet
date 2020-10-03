@@ -22,7 +22,7 @@ LootItemLinks = {}
 
 CountdownTimer = 5
 
-print("Running AxiomLootSheet v1.4.1")
+print("Running AxiomLootSheet v1.4.2")
 ------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
@@ -50,9 +50,8 @@ SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 			LoadSavedStrings()
 		end
 	elseif event == "PLAYER_LOGOUT" then
-            -- Save the values when player logout/reload
-			LoadSavedStrings()
-			SaveStrings()
+		-- Save the values when player logout/reload
+		SaveStrings()
 	end
 end)
 ------------------------------------------------------------------------------------------
@@ -63,7 +62,6 @@ end)
 SLASH_SPREADSHEET1 = "/axiom"
 SlashCmdList["SPREADSHEET"] = function(msg, editBox)
 	if msg == "loots" then
-		print("called loots")
 		if LootResults:IsVisible() then
 			LootResults:Hide()
 		else
@@ -406,7 +404,7 @@ function CreateLootResultsFrame()
 	f:SetScript("OnEvent", function(self, event, ...)
 		if event == "BOSS_KILL" then
 			ClearLootRows()
-			f:Show()
+			LootResults:Show()
 		elseif event == "ENCOUNTER_LOOT_RECEIVED" then
 			local encounterID, itemID, itemLink, quantity, itemName, fileName = ...
 			local i = LootRowsUsed + 1
@@ -416,7 +414,7 @@ function CreateLootResultsFrame()
 			LootItemLinks[i] = itemLink
 			if i < 25 then
 				s = strsub(itemName, 1, 12)
-				print("Player that got loot: " .. itemName .. " SubStr: " .. s)
+				--print("Player that got loot: " .. itemName .. " SubStr: " .. s)
 				LootNames[i]:SetText(s)
 				LootItemStrings[i]:SetText(itemLink)
 				LootItemFrames[i]:HookScript("OnEnter", function()
@@ -440,7 +438,7 @@ function CreateLootResultsFrame()
 	CreateRollTransmogSpecButton()
 	CreateCountdownButton()
 	
-	f:Hide()
+	LootResults:Hide()
 end
 
 function CreateRows()

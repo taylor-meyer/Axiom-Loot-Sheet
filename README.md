@@ -1,5 +1,5 @@
 # Axiom Loot Sheet
-v. 1.4.1
+v. 1.4.2
 
 This addon exists to make a raid leader's life just a bit easier.
 
@@ -18,3 +18,6 @@ Open loot results window with /axiom loots. It will also pop-up upon the defeat/
 * Collect rolls and display winner in GUI.
 * Check with loot sheet to determine winner.
 * Auto-update loot sheet.
+
+## Contact
+lypidius@gmail.com
