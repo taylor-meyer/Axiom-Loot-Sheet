@@ -1,5 +1,5 @@
 # Axiom Loot Sheet
-v. 1.3.1
+v. 1.4.1
 
 This addon exists to make a raid leader's life just a bit easier.
 Open addon with /axiom.

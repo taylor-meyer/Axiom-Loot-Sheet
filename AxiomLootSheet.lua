@@ -22,7 +22,7 @@ LootItemLinks = {}
 
 CountdownTimer = 5
 
-print("Running AxiomLootSheet v1.4.0")
+print("Running AxiomLootSheet v1.4.1")
 ------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
@@ -46,6 +46,8 @@ SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 				OffSpecCount[i] = ""
 				TransmogCount[i] = ""
 			end
+		else
+			LoadSavedStrings()
 		end
 	elseif event == "PLAYER_LOGOUT" then
             -- Save the values when player logout/reload
@@ -68,7 +70,6 @@ SlashCmdList["SPREADSHEET"] = function(msg, editBox)
 			LootResults:Show()
 		end
 	else
-		LoadSavedStrings()
 		if LootSheet:IsVisible() then
 			LootSheet:Hide()
 		else
