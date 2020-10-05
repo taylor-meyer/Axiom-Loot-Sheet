@@ -22,7 +22,7 @@ LootItemLinks = {}
 
 CountdownTimer = 5
 
-print("Running AxiomLootSheet v1.4.2")
+print("Running AxiomLootSheet v1.4.4")
 ------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
@@ -363,7 +363,7 @@ end
 function CreateLootResultsFrame()
 	local f = CreateFrame("Frame", "LootResults", UIParent)
 	f:SetPoint("CENTER")
-	f:SetSize(450, 875)
+	f:SetSize(450, 130)
 	f:SetBackdrop({
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
@@ -415,6 +415,8 @@ function CreateLootResultsFrame()
 			if i < 25 then
 				s = strsub(itemName, 1, 12)
 				--print("Player that got loot: " .. itemName .. " SubStr: " .. s)
+				LootRows[i]:Show()
+				LootResults:SetHeight(LootResults:GetHeight() + 30)
 				LootNames[i]:SetText(s)
 				LootItemStrings[i]:SetText(itemLink)
 				LootItemFrames[i]:HookScript("OnEnter", function()
@@ -458,6 +460,7 @@ function CreateRows()
 			insets = { left = 8, right = 6, top = 8, bottom = 8 },
 		})
 		row:SetBackdropBorderColor(1, 0, 0, 0)
+		row:Hide()
 		-----------------------------------------------------------------------------------------
 		
 		local name = row:CreateFontString("NameFontString" .. i, "OVERLAY", "GameFontNormal")
@@ -616,11 +619,13 @@ function Countdown()
 end
 
 function ClearLootRows()
+	LootResults:SetHeight(130)
 	LootRowsUsed = 0
 	for i=1,25 do
+		LootRows[i]:Hide()
 		LootNames[i]:SetText("")
 		LootItemStrings[i]:SetText("")
-		--TODO: uncheck check button
+		LootCheckButtons[i]:SetChecked(false)
 	end
 end
 
