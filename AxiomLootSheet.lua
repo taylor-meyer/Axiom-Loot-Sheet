@@ -663,27 +663,38 @@ function CreateRollFrame()
 			
 			-- is a roll?
 			if author and rollResult and rollMin and rollMax then
+				-- if we arent showing max number of 20 rolls yet
 				if RollRowsShowing ~= 20 then
+					--- show new roll
 					ShowRollRow(RollRowsShowing+1)
 					RollNames[RollRowsShowing]:SetText(rollResult .. " - " .. author)
+					-- if roll is higher than the current winner
 					if tonumber(rollResult) > HighestRollValue then
+						-- set it to the new highest value and change display to green
 						HighestRollValue = tonumber(rollResult)
 						RollNames[RollRowsShowing]:SetTextColor(0, 1, 0, 1)
-						if HighestRollText ~= nil then
-							HighestRollText:SetTextColor(1, 1, 0, 1)
+						-- reset all others to yellow
+						-- for loop incase of ties that are showing multiple greens
+						for i=1,(RollRowsShowing-1) do
+							RollNames[i]:SetTextColor(1, 1, 0, 1)
 						end
+						-- set highest text to new row
 						HighestRollText = RollNames[RollRowsShowing]
+					-- if there is a tie with current winner, also set it to green
+					-- but no need to change anyone else back to yellow
+					-- or change the current max
+					else if tonumber(rollResult) == HighestRollValue then
+						RollNames[RollRowsShowing]:SetTextColor(0, 1, 0, 1)
 					end
 				end
-			-- is not a roll?
-			else
-				
 			end
-			
+			-- System message is not a roll
+			-- Left here for testing for now
+			else
+				print("Not a roll: " .. message)
+			end
 		end
 	end)
-	
-	
 	
 	CreateRollRows()
 end
