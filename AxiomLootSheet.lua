@@ -440,7 +440,7 @@ function CreateLootResultsFrame()
 	CreateRollTransmogSpecButton()
 	CreateCountdownButton()
 	
-	LootResults:Hide()
+	--LootResults:Hide()
 end
 
 function CreateRows()
@@ -630,13 +630,105 @@ function ClearLootRows()
 end
 
 function AnnounceLoot()
-
+ -- /* TODO */
 end
 
 ------------------------------------------------------------------------------------------
 
+function CreateRollFrame()
+	local f = CreateFrame("Frame", "RollFrame", LootResults)
+	f:SetPoint("TOPLEFT", LootResults, "TOPRIGHT")
+	f:SetSize(150, 47)
+	f:SetBackdrop({
+		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+		edgeSize = 16,
+		insets = { left = 8, right = 6, top = 8, bottom = 8 },
+	})
+	f:SetBackdropBorderColor(255, 215, 200, .5)
+	
+	-- Events
+	RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+	RollFrame:SetScript("OnEvent", function(self, event, ...)
+		if event == "CHAT_MSG_SYSTEM" then
+		-- get rolls
+			local message = ...
+			local author, rollResult, rollMin, rollMax = string.match(message, "(.+) rolls (%d+) %((%d+)-(%d+)%)")
+			print(author .. " " .. rollResult .. " " .. rollMin .. " " .. rollMax)
+			if author then
+				-- SubString the name
+				s = strsub(author, 1, 12)
+				local name = RollFrame:CreateFontString("RollFontString", "OVERLAY", "GameFontNormal")
+				name:SetPoint("TOPLEFT", 10, 0)
+				name:SetText("99 LYPIDIUS9012")
+			end
+		end
+	end)
+	
+	CreateRollRows()
+end
+
+function CreateRollRows()
+	for i=1,20 do
+		local row = CreateFrame("Frame", "RollRow" .. i, RollFrame)
+		row:SetPoint("TOP", 0, 25-(30 * i))
+		row:SetSize(125, 40)
+		row:SetBackdrop({
+			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+			edgeSize = 16,
+			insets = { left = 8, right = 6, top = 8, bottom = 8 },
+		})
+		row:SetBackdropBorderColor(1, .8, 0, 1)
+	end
+end
+
+------------------------------------------------------------------------------------------
+
+
 CreateLootSheet()
 CreateLootResultsFrame()
+CreateRollFrame()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 --[=====[ 
 -- Code I found online to generate an itemLink from the equipped mainhand weapon
