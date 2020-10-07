@@ -25,7 +25,8 @@ CountdownTimer = 5
 RollRows = {}
 RollNames = {} 
 RollRowsShowing = 0
-
+HighestRollValue = 0
+HighestRollText = nil
 print("Running AxiomLootSheet v1.4.4")
 ------------------------------------------------------------------------------------------
 
@@ -662,19 +663,20 @@ function CreateRollFrame()
 			
 			-- is a roll?
 			if author and rollResult and rollMin and rollMax then
-				--print("Found this roll: ")
-				--print(author .. " " .. rollResult .. " " .. rollMin .. " " .. rollMax)
-				
 				if RollRowsShowing ~= 20 then
-					--print("rolls showing var b4: " .. RollRowsShowing)
 					ShowRollRow(RollRowsShowing+1)
 					RollNames[RollRowsShowing]:SetText(rollResult .. " - " .. author)
-					--print("rolls showing var af: " .. RollRowsShowing)
+					if tonumber(rollResult) > HighestRollValue then
+						HighestRollValue = tonumber(rollResult)
+						RollNames[RollRowsShowing]:SetTextColor(0, 1, 0, 1)
+						if HighestRollText ~= nil then
+							HighestRollText:SetTextColor(1, 1, 0, 1)
+						end
+						HighestRollText = RollNames[RollRowsShowing]
+					end
 				end
-				
 			-- is not a roll?
 			else
-				--print(message)
 				
 			end
 			
@@ -712,25 +714,11 @@ function ShowRollRow(i)
 		RollRowsShowing = RollRowsShowing + 1
 	end
 end
-
 ------------------------------------------------------------------------------------------
-
-function RollCreateNewRowButton()
-	local button = CreateFrame("Button", "AddRowButton", UIParent, "UIPanelButtonTemplate")
-	button:SetPoint("TOP")
-	button:SetSize(25, 25)
-	button:SetText("+")
-	button:SetScript('OnClick', function()
-		ShowRollRow(RollRowsShowing+1)
-	end)
-end
-
 
 CreateLootSheet()
 CreateLootResultsFrame()
 CreateRollFrame()
-
---RollCreateNewRowButton()
 
 
 --[=====[ 
