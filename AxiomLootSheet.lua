@@ -22,6 +22,10 @@ LootItemLinks = {}
 
 CountdownTimer = 5
 
+RollRows = {}
+RollNames = {} 
+RollRowsShowing = 0
+
 print("Running AxiomLootSheet v1.4.4")
 ------------------------------------------------------------------------------------------
 
@@ -638,32 +642,46 @@ end
 function CreateRollFrame()
 	local f = CreateFrame("Frame", "RollFrame", LootResults)
 	f:SetPoint("TOPLEFT", LootResults, "TOPRIGHT")
-	f:SetSize(150, 47)
+	f:SetSize(137, 0)
 	f:SetBackdrop({
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
 		edgeSize = 16,
 		insets = { left = 8, right = 6, top = 8, bottom = 8 },
 	})
-	f:SetBackdropBorderColor(255, 215, 200, .5)
+	f:SetBackdropBorderColor(255, 215, 0, .5)
 	
 	-- Events
 	RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 	RollFrame:SetScript("OnEvent", function(self, event, ...)
 		if event == "CHAT_MSG_SYSTEM" then
-		-- get rolls
+		
+			-- get event payload
 			local message = ...
 			local author, rollResult, rollMin, rollMax = string.match(message, "(.+) rolls (%d+) %((%d+)-(%d+)%)")
-			print(author .. " " .. rollResult .. " " .. rollMin .. " " .. rollMax)
-			if author then
-				-- SubString the name
-				s = strsub(author, 1, 12)
-				local name = RollFrame:CreateFontString("RollFontString", "OVERLAY", "GameFontNormal")
-				name:SetPoint("TOPLEFT", 10, 0)
-				name:SetText("99 LYPIDIUS9012")
+			
+			-- is a roll?
+			if author and rollResult and rollMin and rollMax then
+				--print("Found this roll: ")
+				--print(author .. " " .. rollResult .. " " .. rollMin .. " " .. rollMax)
+				
+				if RollRowsShowing ~= 20 then
+					--print("rolls showing var b4: " .. RollRowsShowing)
+					ShowRollRow(RollRowsShowing+1)
+					RollNames[RollRowsShowing]:SetText(rollResult .. " - " .. author)
+					--print("rolls showing var af: " .. RollRowsShowing)
+				end
+				
+			-- is not a roll?
+			else
+				--print(message)
+				
 			end
+			
 		end
 	end)
+	
+	
 	
 	CreateRollRows()
 end
@@ -673,61 +691,46 @@ function CreateRollRows()
 		local row = CreateFrame("Frame", "RollRow" .. i, RollFrame)
 		row:SetPoint("TOP", 0, 25-(30 * i))
 		row:SetSize(125, 40)
-		row:SetBackdrop({
-			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
-			edgeSize = 16,
-			insets = { left = 8, right = 6, top = 8, bottom = 8 },
-		})
-		row:SetBackdropBorderColor(1, .8, 0, 1)
+		
+		local name = row:CreateFontString("RollFontString", "OVERLAY", "GameFontNormal")
+		name:SetPoint("LEFT", 9, 0)
+		
+		row:Hide()
+		RollRows[i] = row
+		RollNames[i] = name
+	end
+end
+
+function ShowRollRow(i)
+	if i < 21 then
+		if i==1 then
+			RollFrame:SetHeight(RollFrame:GetHeight() + 49)
+		else
+			RollFrame:SetHeight(RollFrame:GetHeight() + 30)
+		end
+		RollRows[i]:Show()
+		RollRowsShowing = RollRowsShowing + 1
 	end
 end
 
 ------------------------------------------------------------------------------------------
+
+function RollCreateNewRowButton()
+	local button = CreateFrame("Button", "AddRowButton", UIParent, "UIPanelButtonTemplate")
+	button:SetPoint("TOP")
+	button:SetSize(25, 25)
+	button:SetText("+")
+	button:SetScript('OnClick', function()
+		ShowRollRow(RollRowsShowing+1)
+	end)
+end
 
 
 CreateLootSheet()
 CreateLootResultsFrame()
 CreateRollFrame()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+--RollCreateNewRowButton()
 
 
 --[=====[ 
