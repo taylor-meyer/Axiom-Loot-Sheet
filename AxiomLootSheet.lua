@@ -27,7 +27,7 @@ RollNames = {}
 RollRowsShowing = 0
 HighestRollValue = 0
 HighestRollText = nil
-print("Running AxiomLootSheet v1.4.4")
+print("Running AxiomLootSheet v1.5.0")
 ------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
@@ -656,46 +656,21 @@ function CreateRollFrame()
 	RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 	RollFrame:SetScript("OnEvent", function(self, event, ...)
 		if event == "CHAT_MSG_SYSTEM" then
-		
 			-- get event payload
 			local message = ...
 			local author, rollResult, rollMin, rollMax = string.match(message, "(.+) rolls (%d+) %((%d+)-(%d+)%)")
-			
 			-- is a roll?
 			if author and rollResult and rollMin and rollMax then
-				-- if we arent showing max number of 20 rolls yet
-				if RollRowsShowing ~= 20 then
-					--- show new roll
-					ShowRollRow(RollRowsShowing+1)
-					RollNames[RollRowsShowing]:SetText(rollResult .. " - " .. author)
-					-- if roll is higher than the current winner
-					if tonumber(rollResult) > HighestRollValue then
-						-- set it to the new highest value and change display to green
-						HighestRollValue = tonumber(rollResult)
-						RollNames[RollRowsShowing]:SetTextColor(0, 1, 0, 1)
-						-- reset all others to yellow
-						-- for loop incase of ties that are showing multiple greens
-						for i=1,(RollRowsShowing-1) do
-							RollNames[i]:SetTextColor(1, 1, 0, 1)
-						end
-						-- set highest text to new row
-						HighestRollText = RollNames[RollRowsShowing]
-					-- if there is a tie with current winner, also set it to green
-					-- but no need to change anyone else back to yellow
-					-- or change the current max
-					else if tonumber(rollResult) == HighestRollValue then
-						RollNames[RollRowsShowing]:SetTextColor(0, 1, 0, 1)
-					end
-				end
-			end
-			-- System message is not a roll
-			-- Left here for testing for now
-			else
-				print("Not a roll: " .. message)
+				Payload = {
+					Author = author,
+					RollResult = rollResult,
+					RollMin = rollMin,
+					RollMax = rollMax
+				}
+				DetermineCurrentWinner(Payload)
 			end
 		end
 	end)
-	
 	CreateRollRows()
 end
 
@@ -723,6 +698,32 @@ function ShowRollRow(i)
 		end
 		RollRows[i]:Show()
 		RollRowsShowing = RollRowsShowing + 1
+	end
+end
+
+function DetermineCurrentWinner(Payload)
+	if RollRowsShowing ~= 20 then
+		--- show new roll
+		ShowRollRow(RollRowsShowing+1)
+		RollNames[RollRowsShowing]:SetText(Payload.RollResult .. " - " .. Payload.Author)
+		-- if roll is higher than the current winner
+		if tonumber(Payload.RollResult) > HighestRollValue then
+			-- set it to the new highest value and change display to green
+			HighestRollValue = tonumber(Payload.RollResult)
+			RollNames[RollRowsShowing]:SetTextColor(0, 1, 0, 1)
+			-- reset all others to yellow
+			-- for loop incase of ties that are showing multiple greens
+			for i=1,(RollRowsShowing-1) do
+				RollNames[i]:SetTextColor(1, 1, 0, 1)
+			end
+			-- set highest text to new row
+			HighestRollText = RollNames[RollRowsShowing]
+		-- if there is a tie with current winner, also set it to green
+		-- but no need to change anyone else back to yellow
+		-- or change the current max
+		elseif tonumber(Payload.RollResult) == HighestRollValue then
+			RollNames[RollRowsShowing]:SetTextColor(0, 1, 0, 1)
+		end
 	end
 end
 ------------------------------------------------------------------------------------------
