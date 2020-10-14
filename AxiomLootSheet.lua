@@ -84,7 +84,7 @@ end
 ------------------------------------------------------------------------------------------
 
 function CreateLootSheet()
-	local f = CreateFrame("Frame", "LootSheet", UIParent)
+	local f = CreateFrame("Frame", "LootSheet", UIParent, BackdropTemplateMixin and "BackdropTemplate")
 			f:SetPoint("TOP", 0, -25)
 			f:SetSize(270, 70)
 			f:SetBackdrop({
@@ -134,10 +134,10 @@ end
 function CreateNameBoxes()
 	for i=1, 20 do
 		if i == 1 then
-			NameBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			NameBoxes[i] = CreateFrame("EditBox", nil, LootSheet, BackdropTemplateMixin and "BackdropTemplate")
 			NameBoxes[i]:SetPoint("TOPLEFT", LootSheet, "TOPLEFT", 15, -25)
 		else
-			NameBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			NameBoxes[i] = CreateFrame("EditBox", nil, LootSheet, BackdropTemplateMixin and "BackdropTemplate")
 			NameBoxes[i]:SetPoint("TOP", NameBoxes[i-1], "BOTTOM", 0, 0)
 		end
 		
@@ -166,10 +166,10 @@ end
 function CreateMainSpecBoxes()
 	for i=1, 20 do
 		if i == 1 then
-			MainSpecBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			MainSpecBoxes[i] = CreateFrame("EditBox", nil, LootSheet, BackdropTemplateMixin and "BackdropTemplate")
 			MainSpecBoxes[i]:SetPoint("LEFT", NameBoxes[i], "RIGHT", 5, 0)
 		else
-			MainSpecBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			MainSpecBoxes[i] = CreateFrame("EditBox", nil, LootSheet, BackdropTemplateMixin and "BackdropTemplate")
 			MainSpecBoxes[i]:SetPoint("TOP", MainSpecBoxes[i-1], "BOTTOM", 0, 0)
 		end
 		
@@ -199,10 +199,10 @@ end
 function CreateOffSpecBoxes()
 	for i=1, 20 do
 		if i == 1 then
-			OffSpecBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			OffSpecBoxes[i] = CreateFrame("EditBox", nil, LootSheet, BackdropTemplateMixin and "BackdropTemplate")
 			OffSpecBoxes[i]:SetPoint("LEFT", MainSpecBoxes[i], "RIGHT", 5, 0)
 		else
-			OffSpecBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			OffSpecBoxes[i] = CreateFrame("EditBox", nil, LootSheet, BackdropTemplateMixin and "BackdropTemplate")
 			OffSpecBoxes[i]:SetPoint("TOP", OffSpecBoxes[i-1], "BOTTOM", 0, 0)
 		end
 		
@@ -231,10 +231,10 @@ end
 function CreateTransmogBoxes()
 	for i=1, 20 do
 		if i == 1 then
-			TransmogBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			TransmogBoxes[i] = CreateFrame("EditBox", nil, LootSheet, BackdropTemplateMixin and "BackdropTemplate")
 			TransmogBoxes[i]:SetPoint("LEFT", OffSpecBoxes[i], "RIGHT", 5, 0)
 		else
-			TransmogBoxes[i] = CreateFrame("EditBox", nil, LootSheet)
+			TransmogBoxes[i] = CreateFrame("EditBox", nil, LootSheet, BackdropTemplateMixin and "BackdropTemplate")
 			TransmogBoxes[i]:SetPoint("TOP", TransmogBoxes[i-1], "BOTTOM", 0, 0)
 		end
 		
@@ -366,7 +366,7 @@ end
 ------------------------------------------------------------------------------------------
 
 function CreateLootResultsFrame()
-	local f = CreateFrame("Frame", "LootResults", UIParent)
+	local f = CreateFrame("Frame", "LootResults", UIParent, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetPoint("CENTER")
 	f:SetSize(450, 130)
 	f:SetBackdrop({
@@ -445,7 +445,7 @@ function CreateLootResultsFrame()
 	CreateRollTransmogSpecButton()
 	CreateCountdownButton()
 	
-	--LootResults:Hide()
+	LootResults:Hide()
 end
 
 function CreateRows()
@@ -455,7 +455,7 @@ function CreateRows()
 
 	for i=1,25 do
 	
-		local row = CreateFrame("Frame", "Row " .. i, LootResults)
+		local row = CreateFrame("Frame", "Row " .. i, LootResults, BackdropTemplateMixin and "BackdropTemplate")
 		row:SetPoint("TOPLEFT", 10, -5 - (30 * i))
 		row:SetSize(415, 40)
 		row:SetBackdrop({
@@ -641,7 +641,7 @@ end
 ------------------------------------------------------------------------------------------
 
 function CreateRollFrame()
-	local f = CreateFrame("Frame", "RollFrame", LootResults)
+	local f = CreateFrame("Frame", "RollFrame", LootResults, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetPoint("TOPLEFT", LootResults, "TOPRIGHT")
 	f:SetSize(137, 0)
 	f:SetBackdrop({
