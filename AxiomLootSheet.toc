@@ -2,7 +2,7 @@
 ## Title: AxiomLootSheet
 ## Author: Lypidius
 ## Notes: For Punkology <3
-## Version: 1.5.0
+## Version: 1.5.1
 ## SavedVariables: NameStrings, MainSpecCount, OffSpecCount, TransmogCount
 
 AxiomLootSheet.lua

@@ -27,7 +27,7 @@ RollNames = {}
 RollRowsShowing = 0
 HighestRollValue = 0
 HighestRollText = nil
-print("Running AxiomLootSheet v1.5.0")
+print("Running AxiomLootSheet v1.5.1")
 ------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
