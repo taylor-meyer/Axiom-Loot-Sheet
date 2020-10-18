@@ -385,7 +385,10 @@ function CreateLootResultsFrame()
 	button:SetNormalTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Up")
 	button:SetPushedTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Down")
 	button:SetHighlightTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Highlight", "ADD")
-	button:SetScript("OnClick", function(self) self:GetParent():Hide() end)
+	button:SetScript("OnClick", function(self)
+		self:GetParent():Hide()
+		RollFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
+	end)
 	
 	-- Title text
 	local text = LootResults:CreateFontString(LootResultsTitleText, "OVERLAY", "GameFontNormal")
@@ -470,48 +473,18 @@ function CreateRows()
 		
 		local name = row:CreateFontString("NameFontString" .. i, "OVERLAY", "GameFontNormal")
 		name:SetPoint("LEFT", 10, 0)
-		--name:SetText()
 		-----------------------------------------------------------------------------------------
 		
 		-- Item frame size is big enough to encompass: "Merciless Gladiator's Crossbow of the Phoenix"
-		--	(the longest item name in the game)
+		-- (the longest item name in the game)
 		local f = CreateFrame("Frame", "ItemFrame" .. i, row)
 		f:SetPoint("LEFT", name, "RIGHT", 0, 0)
 		f:SetSize(300,40)
-		--[[
-		f:SetBackdrop({
-			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-			edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
-			edgeSize = 16,
-			insets = { left = 8, right = 6, top = 8, bottom = 8 },
-		})
-		f:SetBackdropBorderColor(1, .6, 0, 1)
-		--]]
 		-----------------------------------------------------------------------------------------
 		
 		local s = f:CreateFontString("ItemString" .. i, "OVERLAY", "GameFontNormal")
 		s:SetPoint("LEFT", 10, 0)
-		--s:SetText(itemLink)
-		--s:SetText("[Merciless Gladiator's Crossbow of the Phoenix]")
-		
-		-- Mouse over script
-		-- TODO: change this such that mouse over only works on the text itself,
-		--			not the entire background frame "ItemFrame" above
-		--[[
-		f:HookScript("OnEnter", function()
-			if (itemLink) then
-				GameTooltip:SetOwner(f, "ANCHOR_TOP")
-				GameTooltip:SetHyperlink(itemLink)
-				GameTooltip:Show()
-			end
-		end)
-		 
-		f:HookScript("OnLeave", function()
-			GameTooltip:Hide()
-		end)
-		--]]
 		-----------------------------------------------------------------------------------------
-		
 		
 		local c = CreateFrame("CheckButton", "LootCheckButton"  .. i, row, "ChatConfigCheckButtonTemplate")
 		c:SetPoint("RIGHT", 17, 0)
@@ -536,13 +509,19 @@ function CreateLootAnnounceButton()
 	button:SetSize(80, 40)
 	button:SetText("Announce")
 	button:SetScript("OnClick", function()
-		--print("Loot announce clicked")
-		-- announce loop
-	   for i=1,25 do
-			if LootCheckButtons[i]:GetChecked() == true then
-				SendChatMessage(LootItemLinks[i], "RAID_WARNING", nil, "channel")
+		inInstance, instanceType = IsInInstance()
+		if inInstance == false then
+			print("Not in an instance!")
+		elseif instanceType ~= "raid" then
+			print("Not in a raid!")
+		else
+			-- announce loop
+			for i=1,25 do
+				if LootCheckButtons[i]:GetChecked() == true then
+					SendChatMessage(LootItemLinks[i], "RAID_WARNING", nil, "channel")
+				end
 			end
-	   end
+		end
 	end)
 end
 
@@ -552,11 +531,18 @@ function CreateRollMainSpecButton()
 	button:SetSize(35, 25)
 	button:SetText("MS")
 	button:SetScript("OnClick", function()
-		--print("Roll MS clicked")
-		for i=1,25 do
-			if LootCheckButtons[i]:GetChecked() == true then
-				SendChatMessage("ROLL FOR MS: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
-				break;
+		inInstance, instanceType = IsInInstance()
+		if inInstance == false then
+			print("Not in an instance!")
+		elseif instanceType ~= "raid" then
+			print("Not in a raid!")
+		else
+			for i=1,25 do
+				if LootCheckButtons[i]:GetChecked() == true then
+					SendChatMessage("ROLL FOR MS: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
+					RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+					break;
+				end
 			end
 		end
 	end)
@@ -568,11 +554,18 @@ function CreateRollOffSpecButton()
 	button:SetSize(35, 25)
 	button:SetText("OS")
 	button:SetScript("OnClick", function()
-		--print("Roll OS clicked")
-		for i=1,25 do
-			if LootCheckButtons[i]:GetChecked() == true then
-				SendChatMessage("ROLL FOR OS: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
-				break;
+		inInstance, instanceType = IsInInstance()
+		if inInstance == false then
+			print("Not in an instance!")
+		elseif instanceType ~= "raid" then
+			print("Not in a raid!")
+		else
+			for i=1,25 do
+				if LootCheckButtons[i]:GetChecked() == true then
+					SendChatMessage("ROLL FOR OS: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
+					RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+					break;
+				end
 			end
 		end
 	end)
@@ -585,11 +578,19 @@ function CreateRollTransmogSpecButton()
 	button:SetSize(35, 25)
 	button:SetText("TM")
 	button:SetScript("OnClick", function()
-		--print("Roll TM clicked")
-		for i=1,25 do
-			if LootCheckButtons[i]:GetChecked() == true then
-				SendChatMessage("ROLL FOR TMOG: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
-				break;
+	
+		inInstance, instanceType = IsInInstance()
+		if inInstance == false then
+			print("Not in an instance!")
+		elseif instanceType ~= "raid" then
+			print("Not in a raid!")
+		else
+			for i=1,25 do
+				if LootCheckButtons[i]:GetChecked() == true then
+					SendChatMessage("ROLL FOR TMOG: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
+					RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+					break;
+				end
 			end
 		end
 	end)
@@ -603,13 +604,14 @@ function CreateCountdownButton()
 	button:SetText("5")
 	button:SetScript("OnClick", function()
 		inInstance, instanceType = IsInInstance()
-		--print(inInstance)
 		if inInstance == false then
 			print("Not in an instance!")
 		elseif instanceType ~= "raid" then
 			print("Not in a raid!")
 		else
 			Countdown()
+			-- Countdown is over, stop looking for rolls
+			RollFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
 			C_Timer.After(6, function() CountdownTimer = 5 end)
 		end
 	end)
@@ -633,11 +635,6 @@ function ClearLootRows()
 		LootCheckButtons[i]:SetChecked(false)
 	end
 end
-
-function AnnounceLoot()
- -- /* TODO */
-end
-
 ------------------------------------------------------------------------------------------
 
 function CreateRollFrame()
@@ -653,7 +650,6 @@ function CreateRollFrame()
 	f:SetBackdropBorderColor(255, 215, 0, .5)
 	
 	-- Events
-	RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 	RollFrame:SetScript("OnEvent", function(self, event, ...)
 		if event == "CHAT_MSG_SYSTEM" then
 			-- get event payload
