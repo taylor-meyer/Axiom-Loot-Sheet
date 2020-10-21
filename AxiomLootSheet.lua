@@ -27,7 +27,7 @@ RollNames = {}
 RollRowsShowing = 0
 HighestRollValue = 0
 HighestRollText = nil
-print("Running AxiomLootSheet v1.5.1")
+print("Running AxiomLootSheet v1.5.2")
 ------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
@@ -540,12 +540,27 @@ function CreateRollMainSpecButton()
 			for i=1,25 do
 				if LootCheckButtons[i]:GetChecked() == true then
 					SendChatMessage("ROLL FOR MS: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
+					ResetRolls()
 					RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 					break;
 				end
 			end
 		end
 	end)
+	
+	-- Use for testing outside of a raid
+	--[=====[
+	button:SetScript("OnClick", function()
+			for i=1,25 do
+				if LootCheckButtons[i]:GetChecked() == true then
+					SendChatMessage("ROLL FOR MS: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
+					ResetRolls()
+					RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+					break;
+				end
+			end
+	end)
+	--]=====]
 end
 
 function CreateRollOffSpecButton()
@@ -563,6 +578,7 @@ function CreateRollOffSpecButton()
 			for i=1,25 do
 				if LootCheckButtons[i]:GetChecked() == true then
 					SendChatMessage("ROLL FOR OS: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
+					ResetRolls()
 					RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 					break;
 				end
@@ -588,6 +604,7 @@ function CreateRollTransmogSpecButton()
 			for i=1,25 do
 				if LootCheckButtons[i]:GetChecked() == true then
 					SendChatMessage("ROLL FOR TMOG: " .. LootItemLinks[i], "RAID_WARNING", nil, "channel")
+					ResetRolls()
 					RollFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 					break;
 				end
@@ -663,6 +680,11 @@ function CreateRollFrame()
 					RollMin = rollMin,
 					RollMax = rollMax
 				}
+				
+				if RollFrame:IsVisible() == false then
+					RollFrame:Show()
+				end
+				
 				DetermineCurrentWinner(Payload)
 			end
 		end
@@ -721,6 +743,17 @@ function DetermineCurrentWinner(Payload)
 			RollNames[RollRowsShowing]:SetTextColor(0, 1, 0, 1)
 		end
 	end
+end
+
+function ResetRolls()
+	RollFrame:SetSize(137, 0)
+	for i=1,20 do
+		RollNames[i]:SetText("")
+	end
+	RollRowsShowing = 0
+	RollFrame:Hide()
+	HighestRollValue = 0
+	HighestRollText = nil
 end
 ------------------------------------------------------------------------------------------
 
