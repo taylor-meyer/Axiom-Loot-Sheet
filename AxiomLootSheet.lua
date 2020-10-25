@@ -27,6 +27,26 @@ RollNames = {}
 RollRowsShowing = 0
 HighestRollValue = 0
 HighestRollText = nil
+
+
+-- For new spreadsheet tabs
+NormalNameStrings = {}
+NormalMainSpecCount = {}
+NormalOffSpecCount = {}
+NormalTransmogSpecCount = {}
+
+HeroicNameStrings = {}
+HeroicMainSpecCount = {}
+HeroicOffSpecCount = {}
+HeroicTransmogSpecCount = {}
+
+MythicNameStrings = {}
+MythicMainSpecCount = {}
+MythicOffSpecCount = {}
+MythicTransmogSpecCount = {}
+
+
+
 print("Running AxiomLootSheet v1.5.2")
 ------------------------------------------------------------------------------------------
 
@@ -86,7 +106,7 @@ end
 function CreateLootSheet()
 	local f = CreateFrame("Frame", "LootSheet", UIParent, BackdropTemplateMixin and "BackdropTemplate")
 			f:SetPoint("TOP", 0, -25)
-			f:SetSize(270, 70)
+			f:SetSize(290, 70)
 			f:SetBackdrop({
 				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 				edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
@@ -103,13 +123,26 @@ function CreateLootSheet()
 			end)
 			f:SetScript("OnMouseUp", f.StopMovingOrSizing)
 			
+			-- Close button
+			local button = CreateFrame("Button", "LootResultsCloseButton", f)
+			button:SetHeight(25)
+			button:SetWidth(25)
+			button:SetPoint("TOPRIGHT", -10, -10)
+			button:SetNormalTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Up")
+			button:SetPushedTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Down")
+			button:SetHighlightTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Highlight", "ADD")
+			button:SetScript("OnClick", function(self)
+				self:GetParent():Hide()
+				RollFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
+			end)
+			
 			CreateNewRowButton()
 			CreateRemoveRowButton()
 			CreateNameBoxes()
 			CreateMainSpecBoxes()
 			CreateOffSpecBoxes()
 			CreateTransmogBoxes()
-			CreateCloseButton()
+			--CreateCloseButton()
 			CreateClearButton()
 			
 			local title_name = LootSheet:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -317,7 +350,7 @@ end
 
 function CreateClearButton()
 	local button = CreateFrame("Button", "ClearButton", LootSheet, "UIPanelButtonTemplate")
-	button:SetPoint("LEFT", CloseButton, "RIGHT", 75, 0)
+	button:SetPoint("BOTTOM", 0, 10)
 	button:SetSize(50, 30)
 	button:SetText("Clear")
 	button:SetScript("OnClick", function()
@@ -795,6 +828,23 @@ Tab_3:SetID(3);
 Tab_3:SetPoint("LEFT", Tab_2, "RIGHT", 3, 0);
 Tab_3:SetText("Mythic");
 PanelTemplates_TabResize(Tab_3, 0)
+
+
+
+
+Tab_1:SetScript('OnClick', function()
+	print("tab1")
+end)
+
+Tab_2:SetScript('OnClick', function()
+	print("tab2")
+end)
+
+Tab_3:SetScript('OnClick', function()
+	print("tab3")
+end)
+
+
 
 LootSheet:Show()
 
