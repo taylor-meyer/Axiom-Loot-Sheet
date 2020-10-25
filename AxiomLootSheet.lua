@@ -762,6 +762,50 @@ CreateLootResultsFrame()
 CreateRollFrame()
 
 
+
+-- NEW THINGS!
+
+local Tab_1 = CreateFrame("Button", "$parentTab1", LootSheet, "TabButtonTemplate");
+
+-- TODO
+-- Below not working even afte importing new 9.01 templates. Fix later. 
+--[=====[ 
+Tab_1:SetBackdrop({
+				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+				edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+				edgeSize = 16,
+				insets = { left = 8, right = 6, top = 8, bottom = 8 },
+				})
+Tab_1:SetBackdropBorderColor(1, 0, 0, .5)
+--]=====]
+
+Tab_1:SetID(1);
+Tab_1:SetPoint("BOTTOMLEFT", LootSheet, "TOPLEFT", 9, -5);
+Tab_1:SetText("Normal");
+PanelTemplates_TabResize(Tab_1, 0)
+
+local Tab_2 = CreateFrame("Button", "$parentTab2", LootSheet, "TabButtonTemplate");
+Tab_2:SetID(2);
+Tab_2:SetPoint("LEFT", Tab_1, "RIGHT", 3, 0);
+Tab_2:SetText("Heroic");
+PanelTemplates_TabResize(Tab_2, 0)
+
+local Tab_3 = CreateFrame("Button", "$parentTab2", LootSheet, "TabButtonTemplate");
+Tab_3:SetID(3);
+Tab_3:SetPoint("LEFT", Tab_2, "RIGHT", 3, 0);
+Tab_3:SetText("Mythic");
+PanelTemplates_TabResize(Tab_3, 0)
+
+LootSheet:Show()
+
+
+
+
+
+
+
+
+
 --[=====[ 
 -- Code I found online to generate an itemLink from the equipped mainhand weapon
 	local mainHandLink = GetInventoryItemLink("player",GetInventorySlotInfo("MainHandSlot"))
