@@ -47,6 +47,7 @@ SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 		if SpreadsheetSave == nil then
 			-- First time loading addon
 			SetDefaultValues()
+			LoadSpreadsheet(SpreadsheetSave[1])
 		else
 			-- SavedVariables do exist
 			LoadSpreadsheet(SpreadsheetSave[1])
@@ -165,11 +166,14 @@ function LoadSpreadsheet(Spreadsheet)
 	TM = Spreadsheet[4]
 
 	for i=1,20 do
+		print(Names[i] .. MS[i] .. " " .. OS[i].. " " .. TM[i])
 		NameBoxes[i]:SetText(Names[i])
 		MainSpecBoxes[i]:SetText(MS[i])
 		OffSpecBoxes[i]:SetText(OS[i])
 		TransmogBoxes[i]:SetText(TM[i])
 	end
+	
+	
 end
 
 function SaveSpreadsheet(tab)
@@ -932,14 +936,23 @@ PanelTemplates_TabResize(Tab_3, 0)
 
 Tab_1:SetScript('OnClick', function()
 	print("tab1")
+	SaveSpreadsheet(CurrentSpreadsheet)
+	CurrentSpreadsheet = 1
+	LoadSpreadsheet(SpreadsheetSave[1])
 end)
 
 Tab_2:SetScript('OnClick', function()
 	print("tab2")
+	SaveSpreadsheet(CurrentSpreadsheet)
+	CurrentSpreadsheet = 2
+	LoadSpreadsheet(SpreadsheetSave[2])
 end)
 
 Tab_3:SetScript('OnClick', function()
 	print("tab3")
+	SaveSpreadsheet(CurrentSpreadsheet)
+	CurrentSpreadsheet = 3
+	LoadSpreadsheet(SpreadsheetSave[3])
 end)
 
 
