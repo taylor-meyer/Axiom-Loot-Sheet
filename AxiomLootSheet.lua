@@ -28,27 +28,12 @@ RollRowsShowing = 0
 HighestRollValue = 0
 HighestRollText = nil
 
-
--- For new spreadsheet tabs
-NormalNameStrings = {}
-NormalMainSpecCount = {}
-NormalOffSpecCount = {}
-NormalTransmogSpecCount = {}
-
-HeroicNameStrings = {}
-HeroicMainSpecCount = {}
-HeroicOffSpecCount = {}
-HeroicTransmogSpecCount = {}
-
-MythicNameStrings = {}
-MythicMainSpecCount = {}
-MythicOffSpecCount = {}
-MythicTransmogSpecCount = {}
-
-
+CurrentSpreadsheet = 1
 
 print("Running AxiomLootSheet v1.5.2")
 ------------------------------------------------------------------------------------------
+
+
 
 ------------------------------------------------------------------------------------------
 -- Saved Variables --
@@ -58,28 +43,34 @@ SavedVariablesFrame:RegisterEvent("ADDON_LOADED")
 SavedVariablesFrame:RegisterEvent("PLAYER_LOGOUT")
 SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 	if event == "ADDON_LOADED" and arg1 == "AxiomLootSheet" then
-		-- Our saved variables have been loaded
-		if NameStrings == nil then
-			-- This is the first time this addon is loaded; set SVs to default values
-			NameStrings = {}
-			MainSpecCount = {}
-			OffSpecCount = {}
-			TransmogCount = {}
-			for i=1, 20 do
-				NameStrings[i] = ""
-				MainSpecCount[i] = ""
-				OffSpecCount[i] = ""
-				TransmogCount[i] = ""
-			end
+		
+		if SpreadsheetSave == nil then
+			-- First time loading addon
+			SetDefaultValues()
 		else
-			LoadSavedStrings()
+			-- SavedVariables do exist
+			LoadSpreadsheet(SpreadsheetSave[1])
 		end
 	elseif event == "PLAYER_LOGOUT" then
 		-- Save the values when player logout/reload
-		SaveStrings()
+		
+		if CurrentSpreadsheet == 1 then
+			SaveSpreadsheet(1)
+		elseif CurrentSpreadsheet == 2 then
+			SaveSpreadsheet(2)
+		else -- CurrentSpreadsheet == 3
+			SaveSpreadsheet(3)
+		end
+		
+		-- Temporary
+		--SpreadsheetSave = nil
 	end
 end)
 ------------------------------------------------------------------------------------------
+
+
+
+
 
 ------------------------------------------------------------------------------------------
 -- Slash Commands --
@@ -102,6 +93,113 @@ SlashCmdList["SPREADSHEET"] = function(msg, editBox)
 	end
 end
 ------------------------------------------------------------------------------------------
+
+function SetDefaultValues()
+	-- For new spreadsheet tabs
+	NormalNameStrings = {}
+	NormalMainSpecCount = {}
+	NormalOffSpecCount = {}
+	NormalTransmogCount = {}
+
+	HeroicNameStrings = {}
+	HeroicMainSpecCount = {}
+	HeroicOffSpecCount = {}
+	HeroicTransmogCount = {}
+
+	MythicNameStrings = {}
+	MythicMainSpecCount = {}
+	MythicOffSpecCount = {}
+	MythicTransmogCount = {}
+
+	for i=1,20 do
+		NormalNameStrings[i] = "NoName"
+		NormalMainSpecCount[i] = "MS"
+		NormalOffSpecCount[i] = "OS"
+		NormalTransmogCount[i] = "TM"
+		
+		HeroicNameStrings[i] = "HeName"
+		HeroicMainSpecCount[i] = "MS"
+		HeroicOffSpecCount[i] = "OS"
+		HeroicTransmogCount[i] = "TM"
+		
+		MythicNameStrings[i] = "MyName"
+		MythicMainSpecCount[i] = "MS"
+		MythicOffSpecCount[i] = "OS"
+		MythicTransmogCount[i] = "TM"
+	end
+
+	NormalSpreadsheet = {
+		NormalNameStrings,
+		NormalMainSpecCount,
+		NormalOffSpecCount,
+		NormalTransmogCount
+	}
+	HeroicSpreadsheet = {
+		HeroicNameStrings,
+		HeroicMainSpecCount,
+		HeroicOffSpecCount,
+		HeroicTransmogCount
+	}
+	MythicSpreadsheet = {
+		MythicNameStrings,
+		MythicMainSpecCount,
+		MythicOffSpecCount,
+		MythicTransmogCount
+	}
+
+	SpreadsheetSave = {
+		NormalSpreadsheet,
+		HeroicSpreadsheet,
+		MythicSpreadsheet
+	}
+
+	print("loaded default values")
+
+end
+
+function LoadSpreadsheet(Spreadsheet)
+
+	Names = Spreadsheet[1]
+	MS = Spreadsheet[2]
+	OS = Spreadsheet[3]
+	TM = Spreadsheet[4]
+
+	for i=1,20 do
+		NameBoxes[i]:SetText(Names[i])
+		MainSpecBoxes[i]:SetText(MS[i])
+		OffSpecBoxes[i]:SetText(OS[i])
+		TransmogBoxes[i]:SetText(TM[i])
+	end
+end
+
+function SaveSpreadsheet(tab)
+
+	Names = {}
+	MS = {}
+	OS = {}
+	TM = {}
+
+	for i=1,20 do
+	
+		Names[i] = NameBoxes[i]:GetText()
+		MS[i] = MainSpecBoxes[i]:GetText()
+		OS[i] = OffSpecBoxes[i]:GetText()
+		TM[i] = TransmogBoxes[i]:GetText()
+	
+	
+	end
+
+	Sheet = {Names, MS, OS, TM}
+
+	if tab == 1 then
+		SpreadsheetSave[1] = Sheet
+	elseif tab == 2 then
+		SpreadsheetSave[2] = Sheet
+	else -- tab == 3
+		SpreadsheetSave[3] = Sheet
+	end
+
+end
 
 function CreateLootSheet()
 	local f = CreateFrame("Frame", "LootSheet", UIParent, BackdropTemplateMixin and "BackdropTemplate")
