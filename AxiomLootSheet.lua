@@ -23,7 +23,7 @@ LootItemLinks = {}
 CountdownTimer = 5
 
 RollRows = {}
-RollNames = {} 
+RollNames = {}
 RollRowsShowing = 0
 HighestRollValue = 0
 HighestRollText = nil
@@ -34,7 +34,6 @@ print("Running AxiomLootSheet v1.5.2")
 ------------------------------------------------------------------------------------------
 
 
-
 ------------------------------------------------------------------------------------------
 -- Saved Variables --
 ------------------------------------------------------------------------------------------
@@ -42,19 +41,18 @@ local SavedVariablesFrame = CreateFrame("Frame")
 SavedVariablesFrame:RegisterEvent("ADDON_LOADED")
 SavedVariablesFrame:RegisterEvent("PLAYER_LOGOUT")
 SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
+	-- Player login
 	if event == "ADDON_LOADED" and arg1 == "AxiomLootSheet" then
-		
+		-- First time loading addon
 		if SpreadsheetSave == nil then
-			-- First time loading addon
 			SetDefaultValues()
 			LoadSpreadsheet(SpreadsheetSave[1])
+		-- SavedVariables do exist
 		else
-			-- SavedVariables do exist
 			LoadSpreadsheet(SpreadsheetSave[1])
 		end
+	-- Player logout/reload
 	elseif event == "PLAYER_LOGOUT" then
-		-- Save the values when player logout/reload
-		
 		if CurrentSpreadsheet == 1 then
 			SaveSpreadsheet(1)
 		elseif CurrentSpreadsheet == 2 then
@@ -62,15 +60,9 @@ SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 		else -- CurrentSpreadsheet == 3
 			SaveSpreadsheet(3)
 		end
-		
-		-- Temporary
-		--SpreadsheetSave = nil
 	end
 end)
 ------------------------------------------------------------------------------------------
-
-
-
 
 
 ------------------------------------------------------------------------------------------
@@ -78,133 +70,28 @@ end)
 ------------------------------------------------------------------------------------------
 SLASH_SPREADSHEET1 = "/axiom"
 SlashCmdList["SPREADSHEET"] = function(msg, editBox)
+	-- /axiom loots
 	if msg == "loots" then
 		if LootResults:IsVisible() then
 			LootResults:Hide()
 		else
 			LootResults:Show()
 		end
+	-- /axiom
 	else
 		if LootSheet:IsVisible() then
 			LootSheet:Hide()
 		else
-			print("Here is your loot sheet, sir Punk.")
 			LootSheet:Show()
 		end
 	end
 end
 ------------------------------------------------------------------------------------------
 
-function SetDefaultValues()
-	-- For new spreadsheet tabs
-	NormalNameStrings = {}
-	NormalMainSpecCount = {}
-	NormalOffSpecCount = {}
-	NormalTransmogCount = {}
 
-	HeroicNameStrings = {}
-	HeroicMainSpecCount = {}
-	HeroicOffSpecCount = {}
-	HeroicTransmogCount = {}
-
-	MythicNameStrings = {}
-	MythicMainSpecCount = {}
-	MythicOffSpecCount = {}
-	MythicTransmogCount = {}
-
-	for i=1,20 do
-		NormalNameStrings[i] = "NoName"
-		NormalMainSpecCount[i] = "MS"
-		NormalOffSpecCount[i] = "OS"
-		NormalTransmogCount[i] = "TM"
-		
-		HeroicNameStrings[i] = "HeName"
-		HeroicMainSpecCount[i] = "MS"
-		HeroicOffSpecCount[i] = "OS"
-		HeroicTransmogCount[i] = "TM"
-		
-		MythicNameStrings[i] = "MyName"
-		MythicMainSpecCount[i] = "MS"
-		MythicOffSpecCount[i] = "OS"
-		MythicTransmogCount[i] = "TM"
-	end
-
-	NormalSpreadsheet = {
-		NormalNameStrings,
-		NormalMainSpecCount,
-		NormalOffSpecCount,
-		NormalTransmogCount
-	}
-	HeroicSpreadsheet = {
-		HeroicNameStrings,
-		HeroicMainSpecCount,
-		HeroicOffSpecCount,
-		HeroicTransmogCount
-	}
-	MythicSpreadsheet = {
-		MythicNameStrings,
-		MythicMainSpecCount,
-		MythicOffSpecCount,
-		MythicTransmogCount
-	}
-
-	SpreadsheetSave = {
-		NormalSpreadsheet,
-		HeroicSpreadsheet,
-		MythicSpreadsheet
-	}
-
-	print("loaded default values")
-
-end
-
-function LoadSpreadsheet(Spreadsheet)
-
-	Names = Spreadsheet[1]
-	MS = Spreadsheet[2]
-	OS = Spreadsheet[3]
-	TM = Spreadsheet[4]
-
-	for i=1,20 do
-		print(Names[i] .. MS[i] .. " " .. OS[i].. " " .. TM[i])
-		NameBoxes[i]:SetText(Names[i])
-		MainSpecBoxes[i]:SetText(MS[i])
-		OffSpecBoxes[i]:SetText(OS[i])
-		TransmogBoxes[i]:SetText(TM[i])
-	end
-	
-	
-end
-
-function SaveSpreadsheet(tab)
-
-	Names = {}
-	MS = {}
-	OS = {}
-	TM = {}
-
-	for i=1,20 do
-	
-		Names[i] = NameBoxes[i]:GetText()
-		MS[i] = MainSpecBoxes[i]:GetText()
-		OS[i] = OffSpecBoxes[i]:GetText()
-		TM[i] = TransmogBoxes[i]:GetText()
-	
-	
-	end
-
-	Sheet = {Names, MS, OS, TM}
-
-	if tab == 1 then
-		SpreadsheetSave[1] = Sheet
-	elseif tab == 2 then
-		SpreadsheetSave[2] = Sheet
-	else -- tab == 3
-		SpreadsheetSave[3] = Sheet
-	end
-
-end
-
+------------------------------------------------------------------------------------------
+-- Spreadsheet --
+------------------------------------------------------------------------------------------
 function CreateLootSheet()
 	local f = CreateFrame("Frame", "LootSheet", UIParent, BackdropTemplateMixin and "BackdropTemplate")
 			f:SetPoint("TOP", 0, -25)
@@ -244,8 +131,8 @@ function CreateLootSheet()
 			CreateMainSpecBoxes()
 			CreateOffSpecBoxes()
 			CreateTransmogBoxes()
-			--CreateCloseButton()
 			CreateClearButton()
+			CreateSpreadsheetTabs()
 			
 			local title_name = LootSheet:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 			title_name:SetPoint("TOP", NameBoxes[1], "TOP", 0, 10)
@@ -498,8 +385,150 @@ function ClearAllRows()
 	end
 end
 
+-- Initializes saved variable if it doesn't already exist
+function SetDefaultValues()
+	NormalNameStrings = {}
+	NormalMainSpecCount = {}
+	NormalOffSpecCount = {}
+	NormalTransmogCount = {}
+	
+	HeroicNameStrings = {}
+	HeroicMainSpecCount = {}
+	HeroicOffSpecCount = {}
+	HeroicTransmogCount = {}
+	
+	MythicNameStrings = {}
+	MythicMainSpecCount = {}
+	MythicOffSpecCount = {}
+	MythicTransmogCount = {}
+	for i=1,20 do
+		NormalNameStrings[i] = "NoName"
+		NormalMainSpecCount[i] = "MS"
+		NormalOffSpecCount[i] = "OS"
+		NormalTransmogCount[i] = "TM"
+		
+		HeroicNameStrings[i] = "HeName"
+		HeroicMainSpecCount[i] = "MS"
+		HeroicOffSpecCount[i] = "OS"
+		HeroicTransmogCount[i] = "TM"
+		
+		MythicNameStrings[i] = "MyName"
+		MythicMainSpecCount[i] = "MS"
+		MythicOffSpecCount[i] = "OS"
+		MythicTransmogCount[i] = "TM"
+	end
+
+	NormalSpreadsheet = {
+		NormalNameStrings,
+		NormalMainSpecCount,
+		NormalOffSpecCount,
+		NormalTransmogCount
+	}
+	HeroicSpreadsheet = {
+		HeroicNameStrings,
+		HeroicMainSpecCount,
+		HeroicOffSpecCount,
+		HeroicTransmogCount
+	}
+	MythicSpreadsheet = {
+		MythicNameStrings,
+		MythicMainSpecCount,
+		MythicOffSpecCount,
+		MythicTransmogCount
+	}
+
+	SpreadsheetSave = {
+		NormalSpreadsheet,
+		HeroicSpreadsheet,
+		MythicSpreadsheet
+	}
+end
+
+-- Displays spreadsheet value to EditBoxes
+function LoadSpreadsheet(Spreadsheet)
+	local Names = Spreadsheet[1]
+	local MS = Spreadsheet[2]
+	local OS = Spreadsheet[3]
+	local TM = Spreadsheet[4]
+	for i=1,20 do
+		NameBoxes[i]:SetText(Names[i])
+		MainSpecBoxes[i]:SetText(MS[i])
+		OffSpecBoxes[i]:SetText(OS[i])
+		TransmogBoxes[i]:SetText(TM[i])
+	end
+end
+
+-- Saves values of EditBoxes to appropriate spreadsheet
+function SaveSpreadsheet(TabID)
+	local Names = {}
+	local MS = {}
+	local OS = {}
+	local TM = {}
+	for i=1,20 do
+		Names[i] = NameBoxes[i]:GetText()
+		MS[i] = MainSpecBoxes[i]:GetText()
+		OS[i] = OffSpecBoxes[i]:GetText()
+		TM[i] = TransmogBoxes[i]:GetText()
+	end
+	Sheet = {Names, MS, OS, TM}
+	
+	-- 1 -> Normal
+	-- 2 -> Heroic
+	-- 3 -> Mythic
+	if TabID == 1 then
+		SpreadsheetSave[1] = Sheet
+	elseif TabID == 2 then
+		SpreadsheetSave[2] = Sheet
+	else -- TabID == 3
+		SpreadsheetSave[3] = Sheet
+	end
+end
+
+-- Creates clickable tabs to manage individual Normal/Heroic/Mythic loot sheets
+function CreateSpreadsheetTabs()
+	local Tab_1 = CreateFrame("Button", "$parentTab1", LootSheet, "TabButtonTemplate")
+	Tab_1:SetID(1)
+	Tab_1:SetPoint("BOTTOMLEFT", LootSheet, "TOPLEFT", 9, -5)
+	Tab_1:SetText("Normal");
+	PanelTemplates_TabResize(Tab_1, 0)
+
+	local Tab_2 = CreateFrame("Button", "$parentTab2", LootSheet, "TabButtonTemplate");
+	Tab_2:SetID(2)
+	Tab_2:SetPoint("LEFT", Tab_1, "RIGHT", 3, 0)
+	Tab_2:SetText("Heroic")
+	PanelTemplates_TabResize(Tab_2, 0)
+
+	local Tab_3 = CreateFrame("Button", "$parentTab2", LootSheet, "TabButtonTemplate")
+	Tab_3:SetID(3)
+	Tab_3:SetPoint("LEFT", Tab_2, "RIGHT", 3, 0)
+	Tab_3:SetText("Mythic");
+	PanelTemplates_TabResize(Tab_3, 0)
+
+
+	Tab_1:SetScript("OnClick", function()
+		SaveSpreadsheet(CurrentSpreadsheet)
+		CurrentSpreadsheet = 1
+		LoadSpreadsheet(SpreadsheetSave[1])
+	end)
+
+	Tab_2:SetScript("OnClick", function()
+		SaveSpreadsheet(CurrentSpreadsheet)
+		CurrentSpreadsheet = 2
+		LoadSpreadsheet(SpreadsheetSave[2])
+	end)
+
+	Tab_3:SetScript("OnClick", function()
+		SaveSpreadsheet(CurrentSpreadsheet)
+		CurrentSpreadsheet = 3
+		LoadSpreadsheet(SpreadsheetSave[3])
+	end)
+end
 ------------------------------------------------------------------------------------------
 
+
+------------------------------------------------------------------------------------------
+-- Loot Results --
+------------------------------------------------------------------------------------------
 function CreateLootResultsFrame()
 	local f = CreateFrame("Frame", "LootResults", UIParent, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetPoint("CENTER")
@@ -789,6 +818,9 @@ function ClearLootRows()
 end
 ------------------------------------------------------------------------------------------
 
+------------------------------------------------------------------------------------------
+-- Roll Tracking --
+------------------------------------------------------------------------------------------
 function CreateRollFrame()
 	local f = CreateFrame("Frame", "RollFrame", LootResults, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetPoint("TOPLEFT", LootResults, "TOPRIGHT")
@@ -892,88 +924,7 @@ function ResetRolls()
 end
 ------------------------------------------------------------------------------------------
 
+
 CreateLootSheet()
 CreateLootResultsFrame()
 CreateRollFrame()
-
-
-
--- NEW THINGS!
-
-local Tab_1 = CreateFrame("Button", "$parentTab1", LootSheet, "TabButtonTemplate");
-
--- TODO
--- Below not working even afte importing new 9.01 templates. Fix later. 
---[=====[ 
-Tab_1:SetBackdrop({
-				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-				edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
-				edgeSize = 16,
-				insets = { left = 8, right = 6, top = 8, bottom = 8 },
-				})
-Tab_1:SetBackdropBorderColor(1, 0, 0, .5)
---]=====]
-
-Tab_1:SetID(1);
-Tab_1:SetPoint("BOTTOMLEFT", LootSheet, "TOPLEFT", 9, -5);
-Tab_1:SetText("Normal");
-PanelTemplates_TabResize(Tab_1, 0)
-
-local Tab_2 = CreateFrame("Button", "$parentTab2", LootSheet, "TabButtonTemplate");
-Tab_2:SetID(2);
-Tab_2:SetPoint("LEFT", Tab_1, "RIGHT", 3, 0);
-Tab_2:SetText("Heroic");
-PanelTemplates_TabResize(Tab_2, 0)
-
-local Tab_3 = CreateFrame("Button", "$parentTab2", LootSheet, "TabButtonTemplate");
-Tab_3:SetID(3);
-Tab_3:SetPoint("LEFT", Tab_2, "RIGHT", 3, 0);
-Tab_3:SetText("Mythic");
-PanelTemplates_TabResize(Tab_3, 0)
-
-
-
-
-Tab_1:SetScript('OnClick', function()
-	print("tab1")
-	SaveSpreadsheet(CurrentSpreadsheet)
-	CurrentSpreadsheet = 1
-	LoadSpreadsheet(SpreadsheetSave[1])
-end)
-
-Tab_2:SetScript('OnClick', function()
-	print("tab2")
-	SaveSpreadsheet(CurrentSpreadsheet)
-	CurrentSpreadsheet = 2
-	LoadSpreadsheet(SpreadsheetSave[2])
-end)
-
-Tab_3:SetScript('OnClick', function()
-	print("tab3")
-	SaveSpreadsheet(CurrentSpreadsheet)
-	CurrentSpreadsheet = 3
-	LoadSpreadsheet(SpreadsheetSave[3])
-end)
-
-
-
-LootSheet:Show()
-
-
-
-
-
-
-
-
-
---[=====[ 
--- Code I found online to generate an itemLink from the equipped mainhand weapon
-	local mainHandLink = GetInventoryItemLink("player",GetInventorySlotInfo("MainHandSlot"))
-	local _, itemLink, _, _, _, _, itemType = GetItemInfo(mainHandLink)
--- send it to chat window to test it works and it does, you can click it in the window and see the item
-	DEFAULT_CHAT_FRAME:AddMessage(itemLink)
---]=====]
-
--- How to get size of a table if I need it
---print("Table size: " .. (table.getn(ItemLinkTable)))
