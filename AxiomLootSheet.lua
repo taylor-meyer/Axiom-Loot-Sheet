@@ -30,7 +30,7 @@ HighestRollText = nil
 
 CurrentSpreadsheet = 1
 
-print("Running AxiomLootSheet v1.5.2")
+print("Running AxiomLootSheet v1.6.0")
 ------------------------------------------------------------------------------------------
 
 
