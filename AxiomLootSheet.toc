@@ -5,4 +5,5 @@
 ## Version: 1.6.0
 ## SavedVariables: SpreadsheetSave
 
+SpreadsheetUI.lua
 AxiomLootSheet.lua
