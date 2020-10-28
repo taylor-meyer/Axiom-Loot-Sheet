@@ -5,12 +5,8 @@
 ------------------------------------------------------------------------------------------
 local addon, ns = ... -- Addon name & common namespace
 
-NameBoxes = {}
-MainSpecBoxes = {}
-OffSpecBoxes = {}
-TransmogBoxes = {}
 
-RowsShowing = 0
+
 
 LootRows = {}
 LootRowsUsed = 0
@@ -47,11 +43,8 @@ SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 		-- First time loading addon
 		if SpreadsheetSave == nil then
 			SetDefaultValues()
-			LoadSpreadsheet(SpreadsheetSave[1])
-		-- SavedVariables do exist
-		else
-			LoadSpreadsheet(SpreadsheetSave[1])
 		end
+		LoadSpreadsheet(SpreadsheetSave[1])
 	-- Player logout/reload
 	elseif event == "PLAYER_LOGOUT" then
 		if CurrentSpreadsheet == 1 then
@@ -80,10 +73,10 @@ SlashCmdList["SPREADSHEET"] = function(msg, editBox)
 		end
 	-- /axiom
 	else
-		if LootSheet:IsVisible() then
-			LootSheet:Hide()
+		if ns.SpreadsheetFrame:IsVisible() then
+			ns.SpreadsheetFrame:Hide()
 		else
-			LootSheet:Show()
+			ns.SpreadsheetFrame:Show()
 		end
 	end
 end
@@ -185,10 +178,10 @@ function LoadSpreadsheet(Spreadsheet)
 	local OS = Spreadsheet[3]
 	local TM = Spreadsheet[4]
 	for i=1,20 do
-		NameBoxes[i]:SetText(Names[i])
-		MainSpecBoxes[i]:SetText(MS[i])
-		OffSpecBoxes[i]:SetText(OS[i])
-		TransmogBoxes[i]:SetText(TM[i])
+		ns.NameBoxes[i]:SetText(Names[i])
+		ns.MainSpecBoxes[i]:SetText(MS[i])
+		ns.OffSpecBoxes[i]:SetText(OS[i])
+		ns.TransmogBoxes[i]:SetText(TM[i])
 	end
 end
 
@@ -199,10 +192,10 @@ function SaveSpreadsheet(TabID)
 	local OS = {}
 	local TM = {}
 	for i=1,20 do
-		Names[i] = NameBoxes[i]:GetText()
-		MS[i] = MainSpecBoxes[i]:GetText()
-		OS[i] = OffSpecBoxes[i]:GetText()
-		TM[i] = TransmogBoxes[i]:GetText()
+		Names[i] = ns.NameBoxes[i]:GetText()
+		MS[i] = ns.MainSpecBoxes[i]:GetText()
+		OS[i] = ns.OffSpecBoxes[i]:GetText()
+		TM[i] = ns.TransmogBoxes[i]:GetText()
 	end
 	Sheet = {Names, MS, OS, TM}
 	
@@ -218,45 +211,30 @@ function SaveSpreadsheet(TabID)
 	end
 end
 
--- Creates clickable tabs to manage individual Normal/Heroic/Mythic loot sheets
-function CreateSpreadsheetTabs()
-	local Tab_1 = CreateFrame("Button", "$parentTab1", LootSheet, "TabButtonTemplate")
-	Tab_1:SetID(1)
-	Tab_1:SetPoint("BOTTOMLEFT", LootSheet, "TOPLEFT", 9, -5)
-	Tab_1:SetText("Normal");
-	PanelTemplates_TabResize(Tab_1, 0)
-
-	local Tab_2 = CreateFrame("Button", "$parentTab2", LootSheet, "TabButtonTemplate");
-	Tab_2:SetID(2)
-	Tab_2:SetPoint("LEFT", Tab_1, "RIGHT", 3, 0)
-	Tab_2:SetText("Heroic")
-	PanelTemplates_TabResize(Tab_2, 0)
-
-	local Tab_3 = CreateFrame("Button", "$parentTab2", LootSheet, "TabButtonTemplate")
-	Tab_3:SetID(3)
-	Tab_3:SetPoint("LEFT", Tab_2, "RIGHT", 3, 0)
-	Tab_3:SetText("Mythic");
-	PanelTemplates_TabResize(Tab_3, 0)
 
 
-	Tab_1:SetScript("OnClick", function()
-		SaveSpreadsheet(CurrentSpreadsheet)
-		CurrentSpreadsheet = 1
-		LoadSpreadsheet(SpreadsheetSave[1])
-	end)
 
-	Tab_2:SetScript("OnClick", function()
-		SaveSpreadsheet(CurrentSpreadsheet)
-		CurrentSpreadsheet = 2
-		LoadSpreadsheet(SpreadsheetSave[2])
-	end)
 
-	Tab_3:SetScript("OnClick", function()
-		SaveSpreadsheet(CurrentSpreadsheet)
-		CurrentSpreadsheet = 3
-		LoadSpreadsheet(SpreadsheetSave[3])
-	end)
-end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ------------------------------------------------------------------------------------------
 
 
@@ -658,7 +636,8 @@ end
 ------------------------------------------------------------------------------------------
 
 
-CreateLootSheet()
+
+ns:CreateSpreadsheetUI()
 CreateLootResultsFrame()
 CreateRollFrame()
 
