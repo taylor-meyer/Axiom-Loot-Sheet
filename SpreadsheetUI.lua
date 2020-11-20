@@ -241,9 +241,7 @@ end
 
 -- Creates button that shows next row
 local function CreateNewRowButton()
-	print("is this getting called?1")
 	local button = CreateFrame("Button", "AddRowButton", SpreadsheetFrame, "UIPanelButtonTemplate")
-	print("is this getting called?2")
 	button:SetPoint("RIGHT", SpreadsheetFrame, "TOPLEFT", 5, -17)
 	button:SetSize(25, 25)
 	button:SetText("+")
@@ -361,48 +359,3 @@ function ns:CreateSpreadsheetUI()
 	-- Assign to addon namespace
 	ns.SpreadsheetFrame = f
 end
-
---[=[
---Addon1
-local addon, ns = ... -- get the addon name and common table.
-ns.SomeVar = 666 -- create an entry in the table.
-function ns:SomeFunc(arg1) -- create a function in the table.
-    print(arg1)
-end
-
--- ... all the other code in the file adding/using "ns" entries also used by other "modules".
-
-
---------------------
---Addon2
--- module testing
-ns:SomeFunc(ns.SomeVar) -- prints 666
-
--- ... all the other code in the file adding/using "ns" entries also used by other "modules".
-
-]=]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

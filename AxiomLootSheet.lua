@@ -27,7 +27,7 @@ HighestRollText = nil
 
 CurrentSpreadsheet = 1
 
-print("Running AxiomLootSheet v1.6.0")
+print("Running AxiomLootSheet v1.6.1")
 ------------------------------------------------------------------------------------------
 
 
@@ -293,12 +293,9 @@ function CreateLootResultsFrame()
 			local encounterID, itemID, itemLink, quantity, itemName, fileName = ...
 			local i = LootRowsUsed + 1
 			LootRowsUsed = LootRowsUsed + 1
-			--print("i: " .. i)
-			--print("LRU: " .. LootRowsUsed)
 			LootItemLinks[i] = itemLink
 			if i < 25 then
 				s = strsub(itemName, 1, 12)
-				--print("Player that got loot: " .. itemName .. " SubStr: " .. s)
 				LootRows[i]:Show()
 				LootResults:SetHeight(LootResults:GetHeight() + 30)
 				LootNames[i]:SetText(s)
@@ -367,8 +364,7 @@ function CreateRows()
 		c.tooltip = "Up for roll"
 		c:SetChecked(false)
 		c:HookScript("OnClick", function()
-			-- do stuff
-			--print("CheckButton clicked")
+		
 		end)
 		
 		LootNames[i] = name

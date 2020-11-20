@@ -2,7 +2,7 @@
 ## Title: AxiomLootSheet
 ## Author: Lypidius
 ## Notes: For Punkology <3
-## Version: 1.6.0
+## Version: 1.6.1
 ## SavedVariables: SpreadsheetSave
 
 SpreadsheetUI.lua

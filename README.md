@@ -1,5 +1,5 @@
 # Axiom Loot Sheet
-v. 1.6.0
+v. 1.6.1
 
 This addon exists to make a raid leader's life just a bit easier.
 
