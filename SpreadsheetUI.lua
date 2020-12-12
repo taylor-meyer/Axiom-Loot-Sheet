@@ -304,7 +304,14 @@ local function CreateSpreadsheetTabs()
 end
 
 
-
+function ClearAllRows()
+	for i=1,20 do
+		NameBoxes[i]:SetText("")
+		MainSpecBoxes[i]:SetText("")
+		OffSpecBoxes[i]:SetText("")
+		TransmogBoxes[i]:SetText("")
+	end
+end
 
 
 

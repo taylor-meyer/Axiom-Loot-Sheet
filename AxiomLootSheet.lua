@@ -103,14 +103,7 @@ function LoadSavedStrings()
 	end
 end
 
-function ClearAllRows()
-	for i=1,20 do
-		NameBoxes[i]:SetText("")
-		MainSpecBoxes[i]:SetText("")
-		OffSpecBoxes[i]:SetText("")
-		TransmogBoxes[i]:SetText("")
-	end
-end
+
 
 -- Initializes saved variable if it doesn't already exist
 function SetDefaultValues()
