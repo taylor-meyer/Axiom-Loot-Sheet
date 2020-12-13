@@ -24,7 +24,7 @@ HighestRollText = nil
 
 CurrentSpreadsheet = 1
 
-print("Running AxiomLootSheet v1.6.1")
+print("Running AxiomLootSheet v1.6.2")
 ------------------------------------------------------------------------------------------
 
 
@@ -338,9 +338,6 @@ function CreateRows()
 		c:SetPoint("RIGHT", 17, 0)
 		c.tooltip = "Up for roll"
 		c:SetChecked(false)
-		c:HookScript("OnClick", function()
-		
-		end)
 		
 		LootNames[i] = name
 		LootItemFrames[i] = f
@@ -351,6 +348,7 @@ function CreateRows()
 end
 
 function CreateLootAnnounceButton()
+
 	local button = CreateFrame("Button", "AnnounceButton", LootResults, "UIPanelButtonTemplate")
 	button:SetPoint("BOTTOM", 0, 20)
 	button:SetSize(80, 40)
@@ -370,7 +368,8 @@ function CreateLootAnnounceButton()
 				end
 			end
 		end)
-	end
+end
+	
 function CreateRollMainSpecButton()
 	local button = CreateFrame("Button", "MainSpecRollButton", LootResults, "UIPanelButtonTemplate")
 	button:SetPoint("BOTTOMLEFT", AnnounceButton, "TOPLEFT", 0, 0)

@@ -10,8 +10,6 @@ local TransmogBoxes = {}
 
 local RowsShowing = 0
 
-
-
 -- Creates close button at top right corner of spreadsheet
 local function CreateCloseButton()
 	-- Close button
@@ -213,8 +211,6 @@ local function CreateClearButton()
 	end)
 end
 
-
-
 -- Function for the script
 local function ShowRow(i)
 	if i < 21 then
@@ -261,8 +257,6 @@ local function CreateRemoveRowButton()
 	end)
 end
 
-
-
 -- Creates clickable tabs to manage individual Normal/Heroic/Mythic loot sheets
 local function CreateSpreadsheetTabs()
 	local Tab_1 = CreateFrame("Button", "$parentTab1", SpreadsheetFrame, "TabButtonTemplate")
@@ -303,7 +297,6 @@ local function CreateSpreadsheetTabs()
 	end)
 end
 
-
 function ClearAllRows()
 	for i=1,20 do
 		NameBoxes[i]:SetText("")
@@ -312,12 +305,6 @@ function ClearAllRows()
 		TransmogBoxes[i]:SetText("")
 	end
 end
-
-
-
-
-
-
 
 -- Initializes the spreadsheet
 function ns:CreateSpreadsheetUI()
