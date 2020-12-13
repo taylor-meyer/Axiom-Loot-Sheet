@@ -265,7 +265,7 @@ function CreateLootResultsFrame()
 			
 			local _,_,itemQuality,_,_,itemType,_,_,_,_,_,_,_,_,_,_,_ = GetItemInfo(itemID) 
 			
-			if itemQuality >= 5 or itemType == "Consumable" then
+			if itemQuality >= 5 or itemType == "Consumable" or itemType == "Miscellaneous" then
 				-- Do nothing
 				LootRowsUsed = LootRowsUsed - 1
 			elseif i < 25 then
