@@ -5,9 +5,6 @@
 ------------------------------------------------------------------------------------------
 local addon, ns = ... -- Addon name & common namespace
 
-
-
-
 LootRows = {}
 LootRowsUsed = 0
 
@@ -29,6 +26,7 @@ CurrentSpreadsheet = 1
 
 print("Running AxiomLootSheet v1.6.1")
 ------------------------------------------------------------------------------------------
+
 
 
 ------------------------------------------------------------------------------------------
@@ -59,6 +57,7 @@ end)
 ------------------------------------------------------------------------------------------
 
 
+
 ------------------------------------------------------------------------------------------
 -- Slash Commands --
 ------------------------------------------------------------------------------------------
@@ -84,7 +83,9 @@ end
 
 
 
-
+------------------------------------------------------------------------------------------
+-- Spreadsheet Helpers --
+------------------------------------------------------------------------------------------
 function SaveStrings()
 	for i=1, 20 do
 		NameStrings[i] = NameBoxes[i]:GetText()
@@ -102,8 +103,6 @@ function LoadSavedStrings()
 		TransmogBoxes[i]:SetText(TransmogCount[i])
 	end
 end
-
-
 
 -- Initializes saved variable if it doesn't already exist
 function SetDefaultValues()
@@ -203,32 +202,8 @@ function SaveSpreadsheet(TabID)
 		SpreadsheetSave[3] = Sheet
 	end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ------------------------------------------------------------------------------------------
+
 
 
 ------------------------------------------------------------------------------------------
@@ -287,7 +262,14 @@ function CreateLootResultsFrame()
 			local i = LootRowsUsed + 1
 			LootRowsUsed = LootRowsUsed + 1
 			LootItemLinks[i] = itemLink
-			if i < 25 then
+			
+			local _,_,itemQuality,_,_,itemType,_,_,_,_,_,_,_,_,_,_,_ = GetItemInfo(itemID) 
+			
+			if itemQuality == 5 or itemType == "Consumable" then
+				-- Do nothing
+				LootRowsUsed = LootRowsUsed - 1
+			elseif i < 25 then
+				
 				s = strsub(itemName, 1, 12)
 				LootRows[i]:Show()
 				LootResults:SetHeight(LootResults:GetHeight() + 30)
@@ -518,6 +500,8 @@ function ClearLootRows()
 end
 ------------------------------------------------------------------------------------------
 
+
+
 ------------------------------------------------------------------------------------------
 -- Roll Tracking --
 ------------------------------------------------------------------------------------------
@@ -630,4 +614,4 @@ ns:CreateSpreadsheetUI()
 CreateLootResultsFrame()
 CreateRollFrame()
 
-
+ns.SpreadsheetFrame:Hide()
