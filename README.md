@@ -1,5 +1,5 @@
 # Axiom Loot Sheet
-v. 1.6.1
+v. 1.6.2
 
 This addon exists to make a raid leader's life just a bit easier.
 
@@ -19,6 +19,7 @@ Open loot results window with /axiom loots. It will also pop-up upon the defeat/
 * Check with spreadshet to determine winner after number of items received.
 * Auto-update loot sheet.
 * Global stats for <Axiom> raiders.
+* Ready check shows players missing food buff, flask, etc.
 
 ## Contact
 lypidius@gmail.com
