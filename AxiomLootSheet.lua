@@ -255,8 +255,12 @@ function CreateLootResultsFrame()
 	
 	f:SetScript("OnEvent", function(self, event, ...)
 		if event == "BOSS_KILL" then
-			ClearLootRows()
-			LootResults:Show()
+			-- Only show the loot results window if in Castle Nathria
+			local _,_,_,_,_,_,_,instanceID = GetInstanceInfo()
+			if instanceID == 2296 then
+				ClearLootRows()
+				LootResults:Show()
+			end
 		elseif event == "ENCOUNTER_LOOT_RECEIVED" then
 			local encounterID, itemID, itemLink, quantity, itemName, fileName = ...
 			local i = LootRowsUsed + 1
