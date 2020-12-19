@@ -54,7 +54,7 @@ local function CreateNameBoxes()
 			edgeSize = 16,
 			insets = { left = 8, right = 6, top = 8, bottom = 8 },
 		})
-		NameBoxes[i]:SetBackdropBorderColor(1, 0, 0, 0)
+		NameBoxes[i]:SetBackdropBorderColor(1, 1, 1, 0.25)
 		NameBoxes[i]:Hide()
 		
 		NameBoxes[i]:SetScript("OnTabPressed", function(self)
@@ -89,7 +89,7 @@ local function CreateMainSpecBoxes()
 			edgeSize = 16,
 			insets = { left = 8, right = 6, top = 8, bottom = 8 },
 		})
-		MainSpecBoxes[i]:SetBackdropBorderColor(1, 0, 0, 0)
+		MainSpecBoxes[i]:SetBackdropBorderColor(1, 1, 1, 0.25)
 		MainSpecBoxes[i]:Hide()
 		
 		MainSpecBoxes[i]:SetScript("OnTabPressed", function(self)
@@ -123,7 +123,7 @@ local function CreateOffSpecBoxes()
 			edgeSize = 16,
 			insets = { left = 8, right = 6, top = 8, bottom = 8 },
 		})
-		OffSpecBoxes[i]:SetBackdropBorderColor(1, 0, 0, 0)
+		OffSpecBoxes[i]:SetBackdropBorderColor(1, 1, 1, 0.25)
 		OffSpecBoxes[i]:Hide()
 		
 		OffSpecBoxes[i]:SetScript("OnTabPressed", function(self)
@@ -157,7 +157,7 @@ local function CreateTransmogBoxes()
 			edgeSize = 16,
 			insets = { left = 8, right = 6, top = 8, bottom = 8 },
 		})
-		TransmogBoxes[i]:SetBackdropBorderColor(1, 0, 0, 0)
+		TransmogBoxes[i]:SetBackdropBorderColor(1, 1, 1, 0.25)
 		TransmogBoxes[i]:Hide()
 		
 		if i < 20 then
@@ -346,9 +346,6 @@ function ns:CreateSpreadsheetUI()
 	CreateRemoveRowButton()
 	CreateCloseButton()
 	CreateSpreadsheetTabs()
-	
-	-- Hide so not visible on load
-	--f:Hide()
 
 	-- Assign to addon namespace
 	ns.SpreadsheetFrame = f
