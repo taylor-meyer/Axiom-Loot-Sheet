@@ -1,9 +1,9 @@
 ## Interface: 90002
-## Title: AxiomLootSheet
+## Title: Axiom Raid Tools
 ## Author: Lypidius
 ## Notes: For Punkology <3
 ## Version: 1.6.2
 ## SavedVariables: SpreadsheetSave
 
 SpreadsheetUI.lua
-AxiomLootSheet.lua
+AxiomRaidTools.lua

@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------------------
--- AxiomLootSheet --
+-- Axiom Raid Tools --
 --------------------
 -- Author: Lypidius <Axiom> @ US-MoonGuard
 ------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ HighestRollText = nil
 
 CurrentSpreadsheet = 1
 
-print("Running AxiomLootSheet v1.6.2")
+print("Running Axiom Raid Tools v1.6.2")
 ------------------------------------------------------------------------------------------
 
 
@@ -36,8 +36,9 @@ local SavedVariablesFrame = CreateFrame("Frame")
 SavedVariablesFrame:RegisterEvent("ADDON_LOADED")
 SavedVariablesFrame:RegisterEvent("PLAYER_LOGOUT")
 SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
+	
 	-- Player login
-	if event == "ADDON_LOADED" and arg1 == "AxiomLootSheet" then
+	if event == "ADDON_LOADED" and arg1 == "AxiomRaidTools" then
 		-- First time loading addon
 		if SpreadsheetSave == nil then
 			SetDefaultValues()
