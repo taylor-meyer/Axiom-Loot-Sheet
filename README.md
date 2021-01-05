@@ -1,5 +1,5 @@
-# Axiom Loot Sheet
-v. 1.6.2
+# Axiom Raid Tools
+v. 1.0
 
 This addon exists to make a raid leader's life just a bit easier.
 
@@ -22,4 +22,4 @@ Open loot results window with /axiom loots. It will also pop-up upon the defeat/
 * Ready check shows players missing food buff, flask, etc.
 
 ## Contact
-lypidius@gmail.com
+Please email me at lypidius@gmail.com to report a bug or give feedback. You can also comment on either download page as well.

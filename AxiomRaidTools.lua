@@ -5,26 +5,26 @@
 ------------------------------------------------------------------------------------------
 local addon, ns = ... -- Addon name & common namespace
 
-LootRows = {}
-LootRowsUsed = 0
+local LootRows = {}
+local LootRowsUsed = 0
 
-LootNames = {}
-LootItemFrames = {}
-LootItemStrings = {}
-LootCheckButtons = {}
-LootItemLinks = {}
+local LootNames = {}
+local LootItemFrames = {}
+local LootItemStrings = {}
+local LootCheckButtons = {}
+local LootItemLinks = {}
 
-CountdownTimer = 5
+local CountdownTimer = 5
 
-RollRows = {}
-RollNames = {}
-RollRowsShowing = 0
-HighestRollValue = 0
-HighestRollText = nil
+local RollRows = {}
+local RollNames = {}
+local RollRowsShowing = 0
+local HighestRollValue = 0
+local HighestRollText = nil
 
-CurrentSpreadsheet = 1
+local CurrentSpreadsheet = 1
 
-print("Running Axiom Raid Tools v1.6.2")
+print("Running Axiom Raid Tools v1.0")
 ------------------------------------------------------------------------------------------
 
 
