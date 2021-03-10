@@ -1,8 +1,8 @@
-## Interface: 90002
+## Interface: 90005
 ## Title: Axiom Raid Tools
 ## Author: Lypidius
 ## Notes: For Punkology <3
-## Version: 1.0
+## Version: 1.0.1
 ## SavedVariables: SpreadsheetSave
 
 SpreadsheetUI.lua
