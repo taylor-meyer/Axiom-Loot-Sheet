@@ -10,7 +10,7 @@ local TransmogBoxes = {}
 
 local RowsShowing = 0
 
--- Creates close button at top right corner of spreadsheet
+--- Creates close button for the spreadsheet
 local function CreateCloseButton()
 	-- Close button
 	local button = CreateFrame("Button", "SpreadsheetCloseButton", SpreadsheetFrame)
@@ -31,7 +31,8 @@ local function CreateCloseButton()
 	end)
 end
 
--- Creates edit boxes for player names
+--- Creates edit boxes for player names for the spreadsheet.
+-- An editbox is an editable text field. In this case, it is a cell of the spreadsheet.
 local function CreateNameBoxes()
 	for i=1, 20 do
 		if i == 1 then
@@ -65,7 +66,7 @@ local function CreateNameBoxes()
 	ns.NameBoxes = NameBoxes
 end
 
--- Creates edit boxes for main spec items received
+--- Creates edit boxes for main spec items received for the spreadsheet.
 local function CreateMainSpecBoxes()
 	for i=1, 20 do
 		if i == 1 then
@@ -100,7 +101,7 @@ local function CreateMainSpecBoxes()
 	ns.MainSpecBoxes = MainSpecBoxes
 end
 
--- Creates edit boxes for off spec items received
+--- Creates edit boxes for off spec items received for the spreadsheet.
 local function CreateOffSpecBoxes()
 	for i=1, 20 do
 		if i == 1 then
@@ -134,7 +135,7 @@ local function CreateOffSpecBoxes()
 	ns.OffSpecBoxes = OffSpecBoxes
 end
 
--- Creates edit boxes for transmog spec items received
+--- Creates edit boxes for transmog items received for the spreadsheet.
 local function CreateTransmogBoxes()
 	for i=1, 20 do
 		if i == 1 then
@@ -170,7 +171,7 @@ local function CreateTransmogBoxes()
 	ns.TransmogBoxes = TransmogBoxes
 end
 
--- Creates column headers using font strings
+--- Creates text that act as headers for each column.
 local function CreateColumnHeaders()
 	local title_name = SpreadsheetFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	title_name:SetPoint("TOP", NameBoxes[1], "TOP", 0, 10)
@@ -189,7 +190,7 @@ local function CreateColumnHeaders()
 	title_tmog:SetText("TMOG")
 end
 
--- Creates button that clears all spreadsheet EditBox text
+--- Creates a button that clears every edit box on the spreadsheet.
 local function CreateClearButton()
 	local button = CreateFrame("Button", "ClearButton", SpreadsheetFrame, "UIPanelButtonTemplate")
 	button:SetPoint("BOTTOM", 0, 10)
@@ -211,7 +212,8 @@ local function CreateClearButton()
 	end)
 end
 
--- Function for the script
+--- Uses a index variable to keep track of which row is on the bottom.
+-- When called, it shows the row below the current and increments the index.
 local function ShowRow(i)
 	if i < 21 then
 		SpreadsheetFrame:SetHeight(SpreadsheetFrame:GetHeight() + 40);
@@ -223,7 +225,8 @@ local function ShowRow(i)
 	end
 end
 
--- Function for the script
+--- Uses a index variable to keep track of which row is on the bottom.
+-- When called, it hides the last row showing and decrements the index.
 local function HideRow(i)
 	if i > 0 then
 		SpreadsheetFrame:SetHeight(SpreadsheetFrame:GetHeight() - 40);
@@ -235,7 +238,7 @@ local function HideRow(i)
 	end
 end
 
--- Creates button that shows next row
+--- Creates button that calls ShowRow()
 local function CreateNewRowButton()
 	local button = CreateFrame("Button", "AddRowButton", SpreadsheetFrame, "UIPanelButtonTemplate")
 	button:SetPoint("RIGHT", SpreadsheetFrame, "TOPLEFT", 5, -17)
@@ -246,7 +249,7 @@ local function CreateNewRowButton()
 	end)
 end
 
--- Creates button that hides bottom row
+--- Creates button that calls HideRow()
 local function CreateRemoveRowButton()
 	local button = CreateFrame("Button", "RemoveRowButton", SpreadsheetFrame, "UIPanelButtonTemplate")
 	button:SetPoint("TOP", AddRowButton, "BOTTOM", 0, 0)
@@ -257,7 +260,8 @@ local function CreateRemoveRowButton()
 	end)
 end
 
--- Creates clickable tabs to manage individual Normal/Heroic/Mythic loot sheets
+--- Creates tab buttons at the top of the frame.
+-- One tab for normal, heroic, and mythic difficulties.
 local function CreateSpreadsheetTabs()
 	local Tab_1 = CreateFrame("Button", "$parentTab1", SpreadsheetFrame, "TabButtonTemplate")
 	Tab_1:SetID(1)
@@ -297,6 +301,7 @@ local function CreateSpreadsheetTabs()
 	end)
 end
 
+--- Deletes all values from all edit boxes.
 function ClearAllRows()
 	for i=1,20 do
 		NameBoxes[i]:SetText("")
@@ -306,7 +311,7 @@ function ClearAllRows()
 	end
 end
 
--- Initializes the spreadsheet
+--- Driver to create the spreadsheet frame and all its UI elements.
 function ns:CreateSpreadsheetUI()
 
 	local f = CreateFrame("Frame", "SpreadsheetFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate")
