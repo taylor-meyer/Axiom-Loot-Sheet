@@ -1,7 +1,11 @@
-local addon, ns = ... -- Addon name & common namespace
 ------------------------------------------------------------------------------------------
 -- Spreadsheet --
+--------------------
+-- Author: Lypidius @ US-MoonGuard
 ------------------------------------------------------------------------------------------
+
+-- Addon name & common namespace
+local addon, ns = ...
 
 local NameBoxes = {}
 local MainSpecBoxes = {}
@@ -10,8 +14,36 @@ local TransmogBoxes = {}
 
 local RowsShowing = 0
 
+--- Event frame for loading spreadsheet db.
+local SavedVariablesFrame = CreateFrame("Frame")
+SavedVariablesFrame:RegisterEvent("ADDON_LOADED")
+SavedVariablesFrame:RegisterEvent("PLAYER_LOGOUT")
+SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
+	
+	-- Player login
+	if event == "ADDON_LOADED" and arg1 == "AxiomRaidTools" then
+	
+		-- First time loading addon
+		if MFP_SpreadsheetDB == nil then
+			ns:setDefaultValues()
+		else
+			ns:LoadSpreadsheet(MFP_SpreadsheetDB[1])
+		end
+		
+	-- Player logout/reload
+	elseif event == "PLAYER_LOGOUT" then
+		if CurrentSpreadsheet == 1 then
+			ns:SaveSpreadsheet(1)
+		elseif CurrentSpreadsheet == 2 then
+			ns:SaveSpreadsheet(2)
+		else -- CurrentSpreadsheet == 3
+			ns:SaveSpreadsheet(3)
+		end
+	end
+end)
+
 --- Creates close button for the spreadsheet
-local function CreateCloseButton()
+local function ns:CreateCloseButton()
 	-- Close button
 	local button = CreateFrame("Button", "SpreadsheetCloseButton", SpreadsheetFrame)
 	
@@ -33,7 +65,7 @@ end
 
 --- Creates edit boxes for player names for the spreadsheet.
 -- An editbox is an editable text field. In this case, it is a cell of the spreadsheet.
-local function CreateNameBoxes()
+local function ns:CreateNameBoxes()
 	for i=1, 20 do
 		if i == 1 then
 			NameBoxes[i] = CreateFrame("EditBox", nil, SpreadsheetFrame, BackdropTemplateMixin and "BackdropTemplate")
@@ -67,7 +99,7 @@ local function CreateNameBoxes()
 end
 
 --- Creates edit boxes for main spec items received for the spreadsheet.
-local function CreateMainSpecBoxes()
+local function ns:CreateMainSpecBoxes()
 	for i=1, 20 do
 		if i == 1 then
 			MainSpecBoxes[i] = CreateFrame("EditBox", nil, SpreadsheetFrame, BackdropTemplateMixin and "BackdropTemplate")
@@ -102,7 +134,7 @@ local function CreateMainSpecBoxes()
 end
 
 --- Creates edit boxes for off spec items received for the spreadsheet.
-local function CreateOffSpecBoxes()
+local function ns:CreateOffSpecBoxes()
 	for i=1, 20 do
 		if i == 1 then
 			OffSpecBoxes[i] = CreateFrame("EditBox", nil, SpreadsheetFrame, BackdropTemplateMixin and "BackdropTemplate")
@@ -136,7 +168,7 @@ local function CreateOffSpecBoxes()
 end
 
 --- Creates edit boxes for transmog items received for the spreadsheet.
-local function CreateTransmogBoxes()
+local function ns:CreateTransmogBoxes()
 	for i=1, 20 do
 		if i == 1 then
 			TransmogBoxes[i] = CreateFrame("EditBox", nil, SpreadsheetFrame, BackdropTemplateMixin and "BackdropTemplate")
@@ -172,7 +204,7 @@ local function CreateTransmogBoxes()
 end
 
 --- Creates text that act as headers for each column.
-local function CreateColumnHeaders()
+local function ns:CreateColumnHeaders()
 	local title_name = SpreadsheetFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	title_name:SetPoint("TOP", NameBoxes[1], "TOP", 0, 10)
 	title_name:SetText("Name")
@@ -191,7 +223,7 @@ local function CreateColumnHeaders()
 end
 
 --- Creates a button that clears every edit box on the spreadsheet.
-local function CreateClearButton()
+local function ns:CreateClearButton()
 	local button = CreateFrame("Button", "ClearButton", SpreadsheetFrame, "UIPanelButtonTemplate")
 	button:SetPoint("BOTTOM", 0, 10)
 	button:SetSize(50, 30)
@@ -214,7 +246,7 @@ end
 
 --- Uses a index variable to keep track of which row is on the bottom.
 -- When called, it shows the row below the current and increments the index.
-local function ShowRow(i)
+local function ns:ShowRow(i)
 	if i < 21 then
 		SpreadsheetFrame:SetHeight(SpreadsheetFrame:GetHeight() + 40);
 		NameBoxes[i]:Show()
@@ -227,7 +259,7 @@ end
 
 --- Uses a index variable to keep track of which row is on the bottom.
 -- When called, it hides the last row showing and decrements the index.
-local function HideRow(i)
+local function ns:HideRow(i)
 	if i > 0 then
 		SpreadsheetFrame:SetHeight(SpreadsheetFrame:GetHeight() - 40);
 		NameBoxes[i]:Hide()
@@ -239,7 +271,7 @@ local function HideRow(i)
 end
 
 --- Creates button that calls ShowRow()
-local function CreateNewRowButton()
+local function ns:CreateNewRowButton()
 	local button = CreateFrame("Button", "AddRowButton", SpreadsheetFrame, "UIPanelButtonTemplate")
 	button:SetPoint("RIGHT", SpreadsheetFrame, "TOPLEFT", 5, -17)
 	button:SetSize(25, 25)
@@ -250,7 +282,7 @@ local function CreateNewRowButton()
 end
 
 --- Creates button that calls HideRow()
-local function CreateRemoveRowButton()
+local function ns:CreateRemoveRowButton()
 	local button = CreateFrame("Button", "RemoveRowButton", SpreadsheetFrame, "UIPanelButtonTemplate")
 	button:SetPoint("TOP", AddRowButton, "BOTTOM", 0, 0)
 	button:SetSize(25, 25)
@@ -262,7 +294,7 @@ end
 
 --- Creates tab buttons at the top of the frame.
 -- One tab for normal, heroic, and mythic difficulties.
-local function CreateSpreadsheetTabs()
+local function ns:CreateSpreadsheetTabs()
 	local Tab_1 = CreateFrame("Button", "$parentTab1", SpreadsheetFrame, "TabButtonTemplate")
 	Tab_1:SetID(1)
 	Tab_1:SetPoint("BOTTOMLEFT", SpreadsheetFrame, "TOPLEFT", 9, -5)
@@ -302,7 +334,7 @@ local function CreateSpreadsheetTabs()
 end
 
 --- Deletes all values from all edit boxes.
-function ClearAllRows()
+function ns:ClearAllRows()
 	for i=1,20 do
 		NameBoxes[i]:SetText("")
 		MainSpecBoxes[i]:SetText("")

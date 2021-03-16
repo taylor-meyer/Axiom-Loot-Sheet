@@ -3,7 +3,7 @@
 ## Author: Lypidius
 ## Notes: For Punkology <3
 ## Version: 1.0.1
-## SavedVariables: SpreadsheetSave
+## SavedVariables: SpreadsheetSave, MFP_SpreadsheetDB
 
 ART_SpreadsheetUI.lua
 AxiomRaidTools.lua
