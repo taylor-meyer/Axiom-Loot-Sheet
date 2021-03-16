@@ -2,8 +2,8 @@
 ## Title: Axiom Raid Tools
 ## Author: Lypidius
 ## Notes: For Punkology <3
-## Version: 1.0.1
-## SavedVariables: SpreadsheetSave, MFP_SpreadsheetDB
+## Version: 1.0.2
+## SavedVariables: MFP_SpreadsheetDB
 
 ART_SpreadsheetUI.lua
 AxiomRaidTools.lua

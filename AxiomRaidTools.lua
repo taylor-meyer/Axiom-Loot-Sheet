@@ -24,40 +24,11 @@ local HighestRollText = nil
 
 local CurrentSpreadsheet = 1
 
-print("Running Axiom Raid Tools v1.0")
-------------------------------------------------------------------------------------------
-
-
 
 ------------------------------------------------------------------------------------------
--- Saved Variables --
-------------------------------------------------------------------------------------------
-local SavedVariablesFrame = CreateFrame("Frame")
-SavedVariablesFrame:RegisterEvent("ADDON_LOADED")
-SavedVariablesFrame:RegisterEvent("PLAYER_LOGOUT")
-SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
-	
-	-- Player login
-	if event == "ADDON_LOADED" and arg1 == "AxiomRaidTools" then
-		-- First time loading addon
-		if SpreadsheetSave == nil then
-			SetDefaultValues()
-		end
-		LoadSpreadsheet(SpreadsheetSave[1])
-	-- Player logout/reload
-	elseif event == "PLAYER_LOGOUT" then
-		if CurrentSpreadsheet == 1 then
-			SaveSpreadsheet(1)
-		elseif CurrentSpreadsheet == 2 then
-			SaveSpreadsheet(2)
-		else -- CurrentSpreadsheet == 3
-			SaveSpreadsheet(3)
-		end
-	end
-end)
-------------------------------------------------------------------------------------------
 
 
+------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Slash Commands --
@@ -81,131 +52,6 @@ SlashCmdList["SPREADSHEET"] = function(msg, editBox)
 	end
 end
 ------------------------------------------------------------------------------------------
-
-
-
-------------------------------------------------------------------------------------------
--- Spreadsheet Helpers --
-------------------------------------------------------------------------------------------
-function SaveStrings()
-	for i=1, 20 do
-		NameStrings[i] = NameBoxes[i]:GetText()
-		MainSpecCount[i] = MainSpecBoxes[i]:GetText()
-		OffSpecCount[i] = OffSpecBoxes[i]:GetText()
-		TransmogCount[i] = TransmogBoxes[i]:GetText()
-	end
-end
-
-function LoadSavedStrings()
-	for i=1,20 do
-		NameBoxes[i]:SetText(NameStrings[i])
-		MainSpecBoxes[i]:SetText(MainSpecCount[i])
-		OffSpecBoxes[i]:SetText(OffSpecCount[i])
-		TransmogBoxes[i]:SetText(TransmogCount[i])
-	end
-end
-
--- Initializes saved variable if it doesn't already exist
-function SetDefaultValues()
-	NormalNameStrings = {}
-	NormalMainSpecCount = {}
-	NormalOffSpecCount = {}
-	NormalTransmogCount = {}
-	
-	HeroicNameStrings = {}
-	HeroicMainSpecCount = {}
-	HeroicOffSpecCount = {}
-	HeroicTransmogCount = {}
-	
-	MythicNameStrings = {}
-	MythicMainSpecCount = {}
-	MythicOffSpecCount = {}
-	MythicTransmogCount = {}
-	for i=1,20 do
-		NormalNameStrings[i] = "NoName"
-		NormalMainSpecCount[i] = "MS"
-		NormalOffSpecCount[i] = "OS"
-		NormalTransmogCount[i] = "TM"
-		
-		HeroicNameStrings[i] = "HeName"
-		HeroicMainSpecCount[i] = "MS"
-		HeroicOffSpecCount[i] = "OS"
-		HeroicTransmogCount[i] = "TM"
-		
-		MythicNameStrings[i] = "MyName"
-		MythicMainSpecCount[i] = "MS"
-		MythicOffSpecCount[i] = "OS"
-		MythicTransmogCount[i] = "TM"
-	end
-
-	NormalSpreadsheet = {
-		NormalNameStrings,
-		NormalMainSpecCount,
-		NormalOffSpecCount,
-		NormalTransmogCount
-	}
-	HeroicSpreadsheet = {
-		HeroicNameStrings,
-		HeroicMainSpecCount,
-		HeroicOffSpecCount,
-		HeroicTransmogCount
-	}
-	MythicSpreadsheet = {
-		MythicNameStrings,
-		MythicMainSpecCount,
-		MythicOffSpecCount,
-		MythicTransmogCount
-	}
-
-	SpreadsheetSave = {
-		NormalSpreadsheet,
-		HeroicSpreadsheet,
-		MythicSpreadsheet
-	}
-end
-
--- Displays spreadsheet value to EditBoxes
-function LoadSpreadsheet(Spreadsheet)
-	local Names = Spreadsheet[1]
-	local MS = Spreadsheet[2]
-	local OS = Spreadsheet[3]
-	local TM = Spreadsheet[4]
-	for i=1,20 do
-		ns.NameBoxes[i]:SetText(Names[i])
-		ns.MainSpecBoxes[i]:SetText(MS[i])
-		ns.OffSpecBoxes[i]:SetText(OS[i])
-		ns.TransmogBoxes[i]:SetText(TM[i])
-	end
-end
-
--- Saves values of EditBoxes to appropriate spreadsheet
-function SaveSpreadsheet(TabID)
-	local Names = {}
-	local MS = {}
-	local OS = {}
-	local TM = {}
-	for i=1,20 do
-		Names[i] = ns.NameBoxes[i]:GetText()
-		MS[i] = ns.MainSpecBoxes[i]:GetText()
-		OS[i] = ns.OffSpecBoxes[i]:GetText()
-		TM[i] = ns.TransmogBoxes[i]:GetText()
-	end
-	Sheet = {Names, MS, OS, TM}
-	
-	-- 1 -> Normal
-	-- 2 -> Heroic
-	-- 3 -> Mythic
-	if TabID == 1 then
-		SpreadsheetSave[1] = Sheet
-	elseif TabID == 2 then
-		SpreadsheetSave[2] = Sheet
-	else -- TabID == 3
-		SpreadsheetSave[3] = Sheet
-	end
-end
-------------------------------------------------------------------------------------------
-
-
 
 ------------------------------------------------------------------------------------------
 -- Loot Results --
@@ -618,4 +464,4 @@ ns:CreateSpreadsheetUI()
 CreateLootResultsFrame()
 CreateRollFrame()
 
-ns.SpreadsheetFrame:Hide()
+--ns.SpreadsheetFrame:Hide()

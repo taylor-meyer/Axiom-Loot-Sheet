@@ -25,7 +25,7 @@ SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 	
 		-- First time loading addon
 		if MFP_SpreadsheetDB == nil then
-			ns:setDefaultValues()
+			ns:SetDefaultValues()
 		else
 			ns:LoadSpreadsheet(MFP_SpreadsheetDB[1])
 		end
@@ -43,7 +43,7 @@ SavedVariablesFrame:SetScript("OnEvent", function(self, event, arg1)
 end)
 
 --- Creates close button for the spreadsheet
-local function ns:CreateCloseButton()
+function ns:CreateCloseButton()
 	-- Close button
 	local button = CreateFrame("Button", "SpreadsheetCloseButton", SpreadsheetFrame)
 	
@@ -65,7 +65,7 @@ end
 
 --- Creates edit boxes for player names for the spreadsheet.
 -- An editbox is an editable text field. In this case, it is a cell of the spreadsheet.
-local function ns:CreateNameBoxes()
+function ns:CreateNameBoxes()
 	for i=1, 20 do
 		if i == 1 then
 			NameBoxes[i] = CreateFrame("EditBox", nil, SpreadsheetFrame, BackdropTemplateMixin and "BackdropTemplate")
@@ -99,7 +99,7 @@ local function ns:CreateNameBoxes()
 end
 
 --- Creates edit boxes for main spec items received for the spreadsheet.
-local function ns:CreateMainSpecBoxes()
+function ns:CreateMainSpecBoxes()
 	for i=1, 20 do
 		if i == 1 then
 			MainSpecBoxes[i] = CreateFrame("EditBox", nil, SpreadsheetFrame, BackdropTemplateMixin and "BackdropTemplate")
@@ -134,7 +134,7 @@ local function ns:CreateMainSpecBoxes()
 end
 
 --- Creates edit boxes for off spec items received for the spreadsheet.
-local function ns:CreateOffSpecBoxes()
+function ns:CreateOffSpecBoxes()
 	for i=1, 20 do
 		if i == 1 then
 			OffSpecBoxes[i] = CreateFrame("EditBox", nil, SpreadsheetFrame, BackdropTemplateMixin and "BackdropTemplate")
@@ -168,7 +168,7 @@ local function ns:CreateOffSpecBoxes()
 end
 
 --- Creates edit boxes for transmog items received for the spreadsheet.
-local function ns:CreateTransmogBoxes()
+function ns:CreateTransmogBoxes()
 	for i=1, 20 do
 		if i == 1 then
 			TransmogBoxes[i] = CreateFrame("EditBox", nil, SpreadsheetFrame, BackdropTemplateMixin and "BackdropTemplate")
@@ -204,7 +204,7 @@ local function ns:CreateTransmogBoxes()
 end
 
 --- Creates text that act as headers for each column.
-local function ns:CreateColumnHeaders()
+function ns:CreateColumnHeaders()
 	local title_name = SpreadsheetFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	title_name:SetPoint("TOP", NameBoxes[1], "TOP", 0, 10)
 	title_name:SetText("Name")
@@ -223,7 +223,7 @@ local function ns:CreateColumnHeaders()
 end
 
 --- Creates a button that clears every edit box on the spreadsheet.
-local function ns:CreateClearButton()
+function ns:CreateClearButton()
 	local button = CreateFrame("Button", "ClearButton", SpreadsheetFrame, "UIPanelButtonTemplate")
 	button:SetPoint("BOTTOM", 0, 10)
 	button:SetSize(50, 30)
@@ -234,7 +234,7 @@ local function ns:CreateClearButton()
 			button1 = "Yes",
 			button2 = "No",
 			OnAccept = function()
-				ClearAllRows()
+				ns:ClearAllRows()
 			end,
 			timeout = 0,
 			whileDead = true,
@@ -246,7 +246,7 @@ end
 
 --- Uses a index variable to keep track of which row is on the bottom.
 -- When called, it shows the row below the current and increments the index.
-local function ns:ShowRow(i)
+function ns:ShowRow(i)
 	if i < 21 then
 		SpreadsheetFrame:SetHeight(SpreadsheetFrame:GetHeight() + 40);
 		NameBoxes[i]:Show()
@@ -259,7 +259,7 @@ end
 
 --- Uses a index variable to keep track of which row is on the bottom.
 -- When called, it hides the last row showing and decrements the index.
-local function ns:HideRow(i)
+function ns:HideRow(i)
 	if i > 0 then
 		SpreadsheetFrame:SetHeight(SpreadsheetFrame:GetHeight() - 40);
 		NameBoxes[i]:Hide()
@@ -271,30 +271,30 @@ local function ns:HideRow(i)
 end
 
 --- Creates button that calls ShowRow()
-local function ns:CreateNewRowButton()
+function ns:CreateNewRowButton()
 	local button = CreateFrame("Button", "AddRowButton", SpreadsheetFrame, "UIPanelButtonTemplate")
 	button:SetPoint("RIGHT", SpreadsheetFrame, "TOPLEFT", 5, -17)
 	button:SetSize(25, 25)
 	button:SetText("+")
 	button:SetScript('OnClick', function()
-		ShowRow(RowsShowing+1)
+		ns:ShowRow(RowsShowing+1)
 	end)
 end
 
 --- Creates button that calls HideRow()
-local function ns:CreateRemoveRowButton()
+function ns:CreateRemoveRowButton()
 	local button = CreateFrame("Button", "RemoveRowButton", SpreadsheetFrame, "UIPanelButtonTemplate")
 	button:SetPoint("TOP", AddRowButton, "BOTTOM", 0, 0)
 	button:SetSize(25, 25)
 	button:SetText("-")
 	button:SetScript('OnClick', function()
-		HideRow(RowsShowing)
+		ns:HideRow(RowsShowing)
 	end)
 end
 
 --- Creates tab buttons at the top of the frame.
 -- One tab for normal, heroic, and mythic difficulties.
-local function ns:CreateSpreadsheetTabs()
+function ns:CreateSpreadsheetTabs()
 	local Tab_1 = CreateFrame("Button", "$parentTab1", SpreadsheetFrame, "TabButtonTemplate")
 	Tab_1:SetID(1)
 	Tab_1:SetPoint("BOTTOMLEFT", SpreadsheetFrame, "TOPLEFT", 9, -5)
@@ -315,21 +315,21 @@ local function ns:CreateSpreadsheetTabs()
 
 
 	Tab_1:SetScript("OnClick", function()
-		SaveSpreadsheet(CurrentSpreadsheet)
+		ns:SaveSpreadsheet(CurrentSpreadsheet)
 		CurrentSpreadsheet = 1
-		LoadSpreadsheet(SpreadsheetSave[1])
+		ns:LoadSpreadsheet(MFP_SpreadsheetDB[1])
 	end)
 
 	Tab_2:SetScript("OnClick", function()
-		SaveSpreadsheet(CurrentSpreadsheet)
+		ns:SaveSpreadsheet(CurrentSpreadsheet)
 		CurrentSpreadsheet = 2
-		LoadSpreadsheet(SpreadsheetSave[2])
+		ns:LoadSpreadsheet(MFP_SpreadsheetDB[2])
 	end)
 
 	Tab_3:SetScript("OnClick", function()
-		SaveSpreadsheet(CurrentSpreadsheet)
+		ns:SaveSpreadsheet(CurrentSpreadsheet)
 		CurrentSpreadsheet = 3
-		LoadSpreadsheet(SpreadsheetSave[3])
+		ns:LoadSpreadsheet(MFP_SpreadsheetDB[3])
 	end)
 end
 
@@ -372,18 +372,137 @@ function ns:CreateSpreadsheetUI()
 	f:SetClampedToScreen(true)
 
 	-- Setup components
-	CreateNameBoxes()
-	CreateMainSpecBoxes()
-	CreateOffSpecBoxes()
-	CreateTransmogBoxes()
+	ns:CreateNameBoxes()
+	ns:CreateMainSpecBoxes()
+	ns:CreateOffSpecBoxes()
+	ns:CreateTransmogBoxes()
 	
-	CreateColumnHeaders()
-	CreateClearButton()
-	CreateNewRowButton()
-	CreateRemoveRowButton()
-	CreateCloseButton()
-	CreateSpreadsheetTabs()
+	ns:CreateColumnHeaders()
+	ns:CreateClearButton()
+	ns:CreateNewRowButton()
+	ns:CreateRemoveRowButton()
+	ns:CreateCloseButton()
+	ns:CreateSpreadsheetTabs()
 
 	-- Assign to addon namespace
 	ns.SpreadsheetFrame = f
 end
+
+
+function ns:SaveStrings()
+	for i=1, 20 do
+		NameStrings[i] = NameBoxes[i]:GetText()
+		MainSpecCount[i] = MainSpecBoxes[i]:GetText()
+		OffSpecCount[i] = OffSpecBoxes[i]:GetText()
+		TransmogCount[i] = TransmogBoxes[i]:GetText()
+	end
+end
+
+function ns:LoadSavedStrings()
+	for i=1,20 do
+		NameBoxes[i]:SetText(NameStrings[i])
+		MainSpecBoxes[i]:SetText(MainSpecCount[i])
+		OffSpecBoxes[i]:SetText(OffSpecCount[i])
+		TransmogBoxes[i]:SetText(TransmogCount[i])
+	end
+end
+
+-- Initializes saved variable if it doesn't already exist
+function ns:SetDefaultValues()
+	ns.NormalNameStrings = {}
+	ns.NormalMainSpecCount = {}
+	ns.NormalOffSpecCount = {}
+	ns.NormalTransmogCount = {}
+	
+	ns.HeroicNameStrings = {}
+	ns.HeroicMainSpecCount = {}
+	ns.HeroicOffSpecCount = {}
+	ns.HeroicTransmogCount = {}
+	
+	ns.MythicNameStrings = {}
+	ns.MythicMainSpecCount = {}
+	ns.MythicOffSpecCount = {}
+	ns.MythicTransmogCount = {}
+	for i=1,20 do
+		ns.NormalNameStrings[i] = "NormName"
+		ns.NormalMainSpecCount[i] = "MS"
+		ns.NormalOffSpecCount[i] = "OS"
+		ns.NormalTransmogCount[i] = "TM"
+		
+		ns.HeroicNameStrings[i] = "HeroicName"
+		ns.HeroicMainSpecCount[i] = "MS"
+		ns.HeroicOffSpecCount[i] = "OS"
+		ns.HeroicTransmogCount[i] = "TM"
+		
+		ns.MythicNameStrings[i] = "MythicName"
+		ns.MythicMainSpecCount[i] = "MS"
+		ns.MythicOffSpecCount[i] = "OS"
+		ns.MythicTransmogCount[i] = "TM"
+	end
+
+	ns.NormalSpreadsheet = {
+		ns.NormalNameStrings,
+		ns.NormalMainSpecCount,
+		ns.NormalOffSpecCount,
+		ns.NormalTransmogCount
+	}
+	ns.HeroicSpreadsheet = {
+		ns.HeroicNameStrings,
+		ns.HeroicMainSpecCount,
+		ns.HeroicOffSpecCount,
+		ns.HeroicTransmogCount
+	}
+	ns.MythicSpreadsheet = {
+		ns.MythicNameStrings,
+		ns.MythicMainSpecCount,
+		ns.MythicOffSpecCount,
+		ns.MythicTransmogCount
+	}
+
+	MFP_SpreadsheetDB = {
+		ns.NormalSpreadsheet,
+		ns.HeroicSpreadsheet,
+		ns.MythicSpreadsheet
+	}
+end
+
+-- Displays spreadsheet value to EditBoxes
+function ns:LoadSpreadsheet(Spreadsheet)
+	local Names = Spreadsheet[1]
+	local MS = Spreadsheet[2]
+	local OS = Spreadsheet[3]
+	local TM = Spreadsheet[4]
+	for i=1,20 do
+		ns.NameBoxes[i]:SetText(Names[i])
+		ns.MainSpecBoxes[i]:SetText(MS[i])
+		ns.OffSpecBoxes[i]:SetText(OS[i])
+		ns.TransmogBoxes[i]:SetText(TM[i])
+	end
+end
+
+-- Saves values of EditBoxes to appropriate spreadsheet
+function ns:SaveSpreadsheet(TabID)
+	local Names = {}
+	local MS = {}
+	local OS = {}
+	local TM = {}
+	for i=1,20 do
+		Names[i] = ns.NameBoxes[i]:GetText()
+		MS[i] = ns.MainSpecBoxes[i]:GetText()
+		OS[i] = ns.OffSpecBoxes[i]:GetText()
+		TM[i] = ns.TransmogBoxes[i]:GetText()
+	end
+	Sheet = {Names, MS, OS, TM}
+	
+	-- 1 -> Normal
+	-- 2 -> Heroic
+	-- 3 -> Mythic
+	if TabID == 1 then
+		MFP_SpreadsheetDB[1] = Sheet
+	elseif TabID == 2 then
+		MFP_SpreadsheetDB[2] = Sheet
+	else -- TabID == 3
+		MFP_SpreadsheetDB[3] = Sheet
+	end
+end
+------------------------------------------------------------------------------------------
